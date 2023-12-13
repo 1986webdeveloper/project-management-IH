@@ -1,0 +1,25 @@
+.inputWrapper {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    position: relative;
+    // width: 100%;
+}
+
+.label {
+    font-size: 0.8rem;
+    font-weight: 900;
+
+    margin-left: 0.5rem;
+    position: absolute;
+    transform: translate(2%, -90%);
+}
+
+.error {
+    position: absolute;
+    transform: translate(1%, 170%);
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+    color: red;
+}
