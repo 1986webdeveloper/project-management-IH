@@ -1,18 +1,17 @@
 export interface UserLogInDTO {
-  username: string;
+  email: string;
   password: string;
 }
 
-export interface PreferenceDTO {
-  companyName: string;
-  companyId: string;
+export interface UserDTO {
+  name: string;
+  email: string;
+  password: string;
+  designation: string;
+  role: string;
 }
 
-export interface UserDTO {
-  username: string;
-  email: string;
-  password?: string;
-  confirmPassword?: string;
-  user_id: string;
-  preference: PreferenceDTO[];
+export interface ResetPassDTO {
+  oldPassword: string;
+  newPassword: string;
 }

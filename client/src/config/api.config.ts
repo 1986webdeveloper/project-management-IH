@@ -1,16 +1,14 @@
-export const HOST_LINK = "http://51.20.72.145";
+// Local URL
+export const BASEURL = "http://192.168.1.60:7000";
 
-export const BACKEND_API = `${HOST_LINK}/api`;
-
-export const MEDIA_API = `${HOST_LINK}/media/ `;
+//Production OR Live
+// export const BASEURL = "http://192.168.1.60:7000";
 
 export const API_LIST = {
-  LOGIN: `${BACKEND_API}/login/`,
-  REGISTER: `${BACKEND_API}/register/`,
-  LOGOUT: `${BACKEND_API}/logout/`,
-  NEWS: `${BACKEND_API}/news/`,
-  CURRENT: `${BACKEND_API}/current/`,
-  USER_UPDATE: `${BACKEND_API}/update_user/`,
-  GET_PREFERENCE: `${BACKEND_API}/show_company/`,
-  SET_PREFERENCE: `${BACKEND_API}/S-U-P/`,
+  LOGIN: `${BASEURL}/auth/login/`,
+  SIGNUP: `${BASEURL}/auth/signup/`,
+  PROJECT: `${BASEURL}/project/`,
+  CREATEPROJECT: `${BASEURL}/project/create`,
+  UPDATEPROJECT: `${BASEURL}/project/update/`,
+  GETPROJECT: `${BASEURL}/project/get`,
 };
