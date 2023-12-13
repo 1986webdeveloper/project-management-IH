@@ -1,24 +1,38 @@
 {
-  "name": "server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && node dist/app.js",
-    "lint": "eslint . --ext .ts"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/express": "^4.17.1",
-    "@typescript-eslint/eslint-plugin": "^6.13.2",
-    "@typescript-eslint/parser": "^6.13.2",
-    "eslint": "^8.55.0",
-    "typescript": "^5.3.2"
-  },
-  "dependencies": {
-    "express": "^4.17.1"
-  }
+	"name": "server",
+	"version": "1.0.0",
+	"description": "",
+	"main": "dist/server.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "tsc && node dist/server.js",
+		"lint": "eslint . --ext .ts",
+		"dev": "ts-node src/server.ts",
+		"build": "tsc",
+		"watch": "ts-node-dev --respawn --transpile-only src/server.ts  config:env/dev.env"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@types/crypto-js": "^4.2.1",
+		"@types/express": "^4.17.1",
+		"@types/jsonwebtoken": "^9.0.5",
+		"@typescript-eslint/eslint-plugin": "^6.13.2",
+		"@typescript-eslint/parser": "^6.13.2",
+		"eslint": "^8.55.0",
+		"typescript": "^5.3.2"
+	},
+	"dependencies": {
+		"class-validator": "^0.14.0",
+		"cookie-parser": "^1.4.6",
+		"cors": "^2.8.5",
+		"crypto-js": "^4.2.0",
+		"dotenv": "^16.3.1",
+		"express": "^4.17.1",
+		"jsonwebtoken": "^9.0.2",
+		"mongoose": "^8.0.2",
+		"mongoose-autopopulate": "^1.1.0",
+		"nodemailer": "^6.9.7"
+	}
 }
