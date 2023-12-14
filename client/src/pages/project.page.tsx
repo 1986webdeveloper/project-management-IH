@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AntCard from "@/components/elements/card/card.element";
 import AntTable from "@/components/elements/table/table.element";
-import { Button, Modal, Tag } from "antd";
+import { Button, Modal, Popconfirm, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { ChangeEvent, SetStateAction, useState } from "react";
@@ -17,90 +17,25 @@ import AntDatePicker from "@/components/elements/datePicker/datePicker.element";
 import { Dayjs } from "dayjs";
 import AntMultiSelect from "@/components/elements/multiSelect/multiSelect.element";
 import { RootState } from "@/store/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ProjectProvider from "@/providers/project .provider";
 import AntInput from "@/components/elements/Input/Input.element";
 import ProjectService from "@/utils/service/project.service";
-
-interface DataType {
-  key: string;
-  projectName: string;
-  startDate: string;
-  estimatedHours: number;
-  status: string;
-  deadlineDate: string;
-  assignedEmployee: string;
-  technologyList: string[];
-  priority: string;
-  client: string;
-  profile: string;
-}
-
-// const data: DataType[] = [
-//   {
-//     key: "1",
-//     projectName: "Inhouse",
-//     client: "Acquaint",
-//     startDate: "2011-11-11",
-//     deadlineDate: "2011-11-11",
-//     assignedEmployee: "A",
-//     profile: "Inhouse",
-//     status: "IN_PROGRESS",
-//     priority: "HIGH",
-//     technologyList: ["nodeJs"],
-//     estimatedHours: 200,
-//   },
-//   {
-//     key: "2",
-//     projectName: "Talking Tom",
-//     client: "Gabe",
-//     startDate: "2011-11-12",
-//     deadlineDate: "2011-11-12",
-//     assignedEmployee: "B",
-//     profile: "Inhouse",
-//     status: "COMPLETED",
-//     priority: "LOW",
-//     technologyList: ["nodeJs"],
-//     estimatedHours: 200,
-//   },
-//   {
-//     key: "3",
-//     projectName: "School Managemant",
-//     client: "David",
-//     startDate: "2011-11-13",
-//     deadlineDate: "2011-11-13",
-//     assignedEmployee: "C",
-//     profile: "Jim",
-//     status: "Hold",
-//     priority: "HIGH",
-//     technologyList: ["nodeJs"],
-//     estimatedHours: 200,
-//   },
-// ];
+import { errorToastHelper } from "@/utils/helper/toast.helper";
 
 const Project = () => {
   const [open, setOpen] = useState(false);
-  const [projectDetails, setProjectDetails] = useState(
-    initProject as ProjectDTO,
-  );
+  const [loading, setLoading] = useState(false);
+  const [projectDetails, setProjectDetails] = useState(initProject);
   const [selectedItem, setSelectedItems] = useState<string[]>([]);
-  const { CreateProject, UpdateProject } = ProjectService();
+  const { CreateProject, UpdateProject, DeleteProject } = ProjectService();
   const [isEdit, setEdit] = useState(false);
   const projectList = useSelector(
     (state: RootState) => state.project.projectList,
   );
+  const dispatch = useDispatch();
 
-  const handleEdit = (data: any | SetStateAction<ProjectDTO>) => {
-    console.log("hello inhande edit---");
-    setSelectedItems(data.technologyList);
-    setProjectDetails(data);
-    setOpen(true);
-    setEdit(true);
-  };
-  const handleDelete = () => {
-    // console.log("Deleted....");
-  };
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<ProjectDTO> = [
     {
       title: <span className="text-blue-950">Project Name</span>,
       dataIndex: "projectName",
@@ -156,67 +91,42 @@ const Project = () => {
       title: <span className="text-blue-950">Action</span>,
       dataIndex: "action",
       key: "action",
-      render: (row, rowIndex) => {
-        // console.log({ row, rowIndex });
-
+      render: (_, rowData) => {
         return (
           <div className="flex gap-5">
             <EditOutlined
               className="hover:text-blue-500"
-              onClick={() => handleEdit(rowIndex)}
+              onClick={() => onEdit(rowData)}
             />
-            <DeleteOutlined
-              className="hover:text-red-600"
-              onClick={handleDelete}
-            />
+
+            <Popconfirm
+              title="Delete the project"
+              description="Are you sure to delete this project?"
+              onConfirm={() => {
+                onDelete(rowData);
+              }}
+              okText="Yes"
+              cancelText="No"
+              okButtonProps={{ className: "bg-blue-950" }}
+              cancelButtonProps={{ danger: true, type: "primary" }}
+            >
+              <DeleteOutlined className="hover:text-red-600" />
+            </Popconfirm>
           </div>
         );
       },
     },
   ];
 
-  const showModal = () => {
-    console.log("helo im  here in model---");
-    console.log("ths.project detail---", projectDetails);
-    setProjectDetails(initProject);
-    setOpen(true);
-  };
-  const handleSave = () => {
-    // todo : please add local redux state of perticular list for Create APi.
-    // todo : add new object coming in response add into that
-    // todo :  and for edit project also get updated project into response add that in to response.
-    // todo :  to legendary dhyan
-
-    const _payload = {
-      ...projectDetails,
-      tecnologyList: selectedItem,
-      estimatedHours: Number(projectDetails.estimatedHours),
-    };
-
-    if (!isEdit) {
-      CreateProject({
-        payload: _payload,
-        setOpen: setOpen,
-      });
-    }
-    if (isEdit) {
-      UpdateProject({
-        payload: _payload,
-        projectId: projectDetails._id ?? "",
-        setOpen: setOpen,
-      });
-    }
-  };
-  const handleCancel = () => {
-    setProjectDetails(initProject);
-    setSelectedItems([]);
-    setOpen(false);
-    setEdit(false);
-  };
+  // *handle change
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = e.target;
-    setProjectDetails({ ...projectDetails, [name]: value });
+    const { value, name, type } = e.target;
+    setProjectDetails({
+      ...projectDetails,
+      [name]: type === "number" ? Number(value) : value,
+    });
   };
+
   const handleSelect = (e: string, id: string) => {
     console.log({ e, id });
 
@@ -231,6 +141,59 @@ const Project = () => {
     console.log("hello 000--- handle date select---", projectDetails);
 
     setProjectDetails({ ...projectDetails, [id]: dateString });
+  };
+
+  // *modal actions
+  const handleCancel = () => {
+    setProjectDetails(initProject);
+    setSelectedItems([]);
+    setOpen(false);
+    setEdit(false);
+  };
+
+  const showModal = () => {
+    setProjectDetails(initProject);
+    setOpen(true);
+  };
+
+  // *FormActions
+
+  const onSubmit = () => {
+    const _payload = {
+      ...projectDetails,
+      tecnologyList: selectedItem,
+    };
+
+    if (!isEdit) {
+      CreateProject({
+        payload: _payload,
+        setOpen: setOpen,
+        projectList,
+        dispatch,
+        setLoading,
+      });
+    }
+    if (isEdit) {
+      UpdateProject({
+        payload: _payload,
+        setIsEdit: setEdit,
+        setOpen: setOpen,
+        projectList,
+        dispatch,
+        setLoading,
+      });
+    }
+  };
+  const onEdit = (data: ProjectDTO) => {
+    setSelectedItems(data.technologyList);
+    setProjectDetails(data);
+    setOpen(true);
+    setEdit(true);
+  };
+
+  const onDelete = (data: ProjectDTO) => {
+    if (!data._id) return errorToastHelper("Project ID not found!!S");
+    DeleteProject({ projectId: data?._id ?? "", setLoading });
   };
 
   return (
@@ -259,17 +222,12 @@ const Project = () => {
               {isEdit ? "Edit Project" : "Create Project"}
             </span>
           }
-          onOk={handleSave}
+          onOk={onSubmit}
           width={800}
           onCancel={handleCancel}
-          footer={[
-            <Button key="back" onClick={handleCancel}>
-              Cancel
-            </Button>,
-            <Button key="submit" onClick={handleSave}>
-              {isEdit ? "Edit" : "Save"}
-            </Button>,
-          ]}
+          okButtonProps={{ className: "bg-blue-950" }}
+          okText={isEdit ? "Update" : "Save"}
+          cancelButtonProps={{ danger: true, type: "primary" }}
         >
           <div className="grid py-4 grid-rows-5 text-blue-950 grid-flow-col gap-2 items-start w-[100%]">
             <AntInput
@@ -278,14 +236,15 @@ const Project = () => {
               placeHolder={"Enter Your Project Name"}
               value={projectDetails.projectName}
               onChange={handleChange}
-            ></AntInput>
+            />
             <AntInput
               name={"clientId"}
               label="ClientId"
               placeHolder={"Enter Your Customer Name"}
               value={projectDetails.clientId}
               onChange={handleChange}
-            ></AntInput>
+              disabled
+            />
             <div className="flex gap-5">
               <AntDatePicker
                 name={"startDate"}
@@ -319,14 +278,15 @@ const Project = () => {
               placeHolder={"Enter AssigneeS"}
               value={projectDetails.assignedEmployee}
               onChange={handleChange}
-            ></AntInput>
+            />
             <AntInput
               name={"estimatedHours"}
               label="Estimated Hours"
               placeHolder={"Enter Estimated Hours"}
               value={projectDetails.estimatedHours?.toString()}
               onChange={handleChange}
-            ></AntInput>
+              type="number"
+            />
             <AntSelect
               id="status"
               options={ProjectStatus}
@@ -341,7 +301,7 @@ const Project = () => {
               placeHolder={"Enter Your Profile Name"}
               value={projectDetails.profile}
               onChange={handleChange}
-            ></AntInput>
+            />
             <AntMultiSelect
               width={330}
               value={projectDetails.technologyList}

@@ -1,4 +1,4 @@
-import { ProjectDTO } from "@/types/fieldTypes";
+import { ClientDTO, ProjectDTO } from "@/types/fieldTypes";
 
 export const ProjectStatus = [
   { label: "In-Progress", value: "IN_PROGRESS" },
@@ -29,4 +29,11 @@ export const initProject: ProjectDTO = {
   clientId: "6571b5200b544c626e7d46a9",
   profile: "",
   _id: "",
+};
+
+export const initClient: ClientDTO = {
+  clientName: "",
+  onBoardingDate: "",
+  industry: "",
+  manager: "",
 };

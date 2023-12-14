@@ -2,7 +2,7 @@
 import { getToken } from "./token.helper";
 
 export const RequestHelper = (
-  method: "GET" | "POST" | "PUT",
+  method: "GET" | "POST" | "PUT" | "DELETE",
   url: string,
   options?: { payload?: any; token?: string },
 ) => {
@@ -13,10 +13,11 @@ export const RequestHelper = (
   };
 
   if (method === "POST" || method === "PUT") {
+    obj.headers.Authorization = `Bearer ${options?.token ?? getToken()}`;
     obj.data = options?.payload;
   }
 
-  if (method === "GET" || method === "PUT" || method === "POST") {
+  if (method === "GET" || "DELETE") {
     obj.headers.Authorization = `Bearer ${options?.token ?? getToken()}`;
   }
 

@@ -1,21 +1,25 @@
-import { ReactNode, useEffect } from 'react';
-import ClientService from '@/utils/service/client.service';
-import { useDispatch } from 'react-redux';
+import { ReactNode, useEffect, useState } from "react";
+import ClientService from "@/utils/service/client.service";
+import { useDispatch, useSelector } from "react-redux";
+import { Spin } from "antd";
+import { RootState } from "@/store/store";
 
 type Props = {
-	children: ReactNode;
+  children: ReactNode;
 };
 
 const ClientProvider = (props: Props) => {
-	const { GetClient } = ClientService();
+  const [loading, setLoading] = useState(false);
+  const { GetClient } = ClientService();
+  const clientList = useSelector((state: RootState) => state.client.clientList);
 
-	const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-	useEffect(() => {
-		GetClient({ dispatch });
-	}, []);
+  useEffect(() => {
+    GetClient({ dispatch, setLoading });
+  }, []);
 
-	return <>{props.children}</>;
+  return <Spin spinning={loading}>{props.children}</Spin>;
 };
 
 export default ClientProvider;
