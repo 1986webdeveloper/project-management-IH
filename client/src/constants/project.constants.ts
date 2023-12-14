@@ -12,12 +12,12 @@ export const ProjectPriority = [
   { label: "MEDIUM", value: "MEDIUM" },
 ];
 
-export const TecnologyList = [
+export const technologyConstant = [
   { value: "nodeJs", label: "NodeJs" },
   { value: "reactJs", label: "ReactJs" },
 ];
 
-export const initProject = {
+export const initProject: ProjectDTO = {
   projectName: "",
   startDate: "",
   estimatedHours: 0,
@@ -26,6 +26,7 @@ export const initProject = {
   assignedEmployee: "",
   technologyList: [],
   priority: "",
-  client: "",
+  clientId: "6571b5200b544c626e7d46a9",
   profile: "",
+  _id: "",
 };
