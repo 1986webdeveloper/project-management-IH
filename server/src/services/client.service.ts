@@ -12,6 +12,7 @@ export const ClientService = new (class {
 		});
 
 		if (Client) {
+			console.log(Client);
 			Client.save();
 			return Client;
 		}
@@ -23,7 +24,7 @@ export const ClientService = new (class {
 	};
 
 	updateClient = async (ClientId: string, data: any) => {
-		let updatedClient = await ClientSchema.findByIdAndUpdate(ClientId, data).exec();
+		let updatedClient = await ClientSchema.findByIdAndUpdate(ClientId, data, { returnDocument: 'after' }).exec();
 		return updatedClient;
 	};
 

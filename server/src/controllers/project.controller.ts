@@ -24,7 +24,7 @@ export default class ProjectController {
 						message: 'Project data saved Successfully',
 						status: 'Success',
 						statusCode: 201,
-						data: payload,
+						data: { ...payload, _id: project._id },
 					}),
 				);
 			} else {

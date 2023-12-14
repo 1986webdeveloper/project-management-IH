@@ -23,4 +23,5 @@ export interface ProjectInterface {
 	priority: string;
 	clientId: Types.ObjectId;
 	profile: string;
+	_id?: Types.ObjectId;
 }

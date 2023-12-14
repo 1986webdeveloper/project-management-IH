@@ -19,7 +19,7 @@ export const ProjectService = new (class {
 
 		if (Project) {
 			Project.save();
-			return Project;
+			return { ...Project, _id: Project._id };
 		}
 	};
 
@@ -34,7 +34,7 @@ export const ProjectService = new (class {
 	};
 
 	updateProject = async (projectId: string, data: any) => {
-		let updatedProject = await ProjectSchema.findByIdAndUpdate(projectId, data).exec();
+		let updatedProject = await ProjectSchema.findByIdAndUpdate(projectId, data, { returnDocument: 'after' }).exec();
 		return updatedProject;
 	};
 

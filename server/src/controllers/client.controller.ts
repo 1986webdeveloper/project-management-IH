@@ -9,8 +9,10 @@ export default class ClientController {
 	protected readonly CreateClient = async (req: Request, res: Response) => {
 		try {
 			const payload: CreateClientValidation = req.body;
+
 			const validObj = new CreateClientValidation();
 			Object.assign(validObj, payload);
+
 			const _errMessage = await checkValidation(validObj);
 
 			if (_errMessage) {
@@ -18,19 +20,21 @@ export default class ClientController {
 			}
 
 			const client: ClientInterface | null = await ClientService.createClient(payload);
-			if (!client) {
+
+			if (client) {
+				return res.status(201).json(
+					successResponseHelper({
+						message: 'Client data saved Successfully',
+						status: 'Success',
+						statusCode: 201,
+						data: { ...payload, _id: client._id },
+					}),
+				);
+			} else {
 				return res
 					.status(400)
 					.json(errorResponseHelper({ message: 'Client data not found', status: 'Error', statusCode: 400 }));
 			}
-			return res.status(201).json(
-				successResponseHelper({
-					message: 'Client data saved Successfully',
-					status: 'Success',
-					statusCode: 201,
-					data: payload,
-				}),
-			);
 		} catch (error) {
 			console.log(error);
 			return res
@@ -89,7 +93,7 @@ export default class ClientController {
 					.status(400)
 					.json(errorResponseHelper({ message: 'Client data is not valid', status: 'Error', statusCode: 400 }));
 			}
-
+			console.log('--------->', updatedClient);
 			return res.status(200).json(
 				successResponseHelper({
 					message: 'Client data updated Successfully',

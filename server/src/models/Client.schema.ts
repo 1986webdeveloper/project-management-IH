@@ -12,3 +12,4 @@ const Client: Schema = new Schema(
 );
 
 export default mongoose.model<ClientInterface>('Client', Client);
+0;

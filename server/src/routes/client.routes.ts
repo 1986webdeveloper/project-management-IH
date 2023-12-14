@@ -11,7 +11,7 @@ export default class Client extends ClientController {
 
 	private initializeRoutes() {
 		this.router.post('/create', this.CreateClient);
-		this.router.get('/', this.GetClient);
+		this.router.get('/get', this.GetClient);
 		this.router.get('/:id', this.GetClient);
 		this.router.put('/update/:id', this.UpdateClient);
 		this.router.delete('/delete/:id', this.DeleteClient);
