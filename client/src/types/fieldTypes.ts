@@ -1,26 +1,34 @@
 export interface fieldTypes {
-  labelText: string;
-  labelFor: string;
-  id: string;
-  name: string;
-  type: string;
-  autoComplete: string;
-  isRequired: boolean;
-  placeholder: string;
-  pattern: RegExp;
+	labelText: string;
+	labelFor: string;
+	id: string;
+	name: string;
+	type: string;
+	autoComplete: string;
+	isRequired: boolean;
+	placeholder: string;
+	pattern: RegExp;
 }
 
 export interface ProjectDTO {
-  projectName: string;
-  startDate: string;
-  estimatedHours: number;
-  status: string;
-  deadlineDate: string;
-  assignedEmployee: string;
-  technologyList: string[];
-  priority: string;
-  client: string;
-  profile: string;
+	projectName: string;
+	startDate: string;
+	estimatedHours: number;
+	status: string;
+	deadlineDate: string;
+	assignedEmployee: string;
+	technologyList: string[];
+	priority: string;
+	clientId: string;
+	profile: string;
+	_id?: string;
+}
+
+export interface ClientDTO {
+	clientName: string;
+	onBoardingDate: string;
+	industry: string;
+	manager: string;
 }
 
 //  "projectName": "Project management software",
