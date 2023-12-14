@@ -12,10 +12,12 @@ import { setProjectList } from "@/store/slices/projectSlice";
 
 interface createProjectProps {
   payload: any;
+  setOpen: (e: boolean) => void;
 }
 interface updateProjectProps {
   payload: any;
   projectId: string;
+  setOpen: (e: boolean) => void;
 }
 interface getProjectListProps {
   dispatch: Dispatch<UnknownAction>;
@@ -23,16 +25,13 @@ interface getProjectListProps {
 
 const ProjectService = () => {
   const navigate = useNavigate();
-  const CreateProject = ({ payload }: createProjectProps) => {
-    const _payload = {
-      ...payload,
-      clientId: "6571b5200b544c626e7d46a9",
-    };
-    axios(RequestHelper("POST", API_LIST.CREATEPROJECT, { payload: _payload }))
+  const CreateProject = ({ payload, setOpen }: createProjectProps) => {
+    console.log(payload);
+    axios(RequestHelper("POST", API_LIST.CREATEPROJECT, { payload: payload }))
       .then((response: any) => {
         const _data = response.data;
         console.log(_data);
-        navigate(ROUTES.PROJECT);
+        setOpen(false);
       })
       .catch((error) => {
         const errorMessege = error?.response?.data?.error;
@@ -40,21 +39,20 @@ const ProjectService = () => {
       });
   };
 
-  const UpdateProject = ({ payload, projectId }: updateProjectProps) => {
-    const _payload = {
-      ...payload,
-      clientId: "6571b5200b544c626e7d46a9",
-    };
-
+  const UpdateProject = ({
+    payload,
+    projectId,
+    setOpen,
+  }: updateProjectProps) => {
     axios(
       RequestHelper("PUT", API_LIST.UPDATEPROJECT + `${projectId}`, {
-        payload: _payload,
+        payload: payload,
       }),
     )
       .then((response: any) => {
         const _data = response.data;
         console.log(_data);
-        navigate(ROUTES.PROJECT);
+        setOpen(false);
       })
       .catch((error) => {
         const errorMessege = error?.response?.data?.error;

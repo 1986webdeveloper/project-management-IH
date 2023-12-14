@@ -1,6 +1,7 @@
 import { DatePicker } from "antd";
 import styles from "./datePicker.module.scss";
 import dayjs, { Dayjs } from "dayjs";
+import React from "react";
 
 type InputProps = {
   name: string;
@@ -17,19 +18,15 @@ type InputProps = {
 };
 
 const AntDatePicker = ({ value, label, onChange }: InputProps) => {
-  console.log("props.value===", value);
   return (
     <div className={styles.inputWrapper}>
       {label ? <span className={styles.label}>{label}</span> : ""}
-
-      {/* <input type="date" value={value} onChange={onchange} /> */}
-
       <DatePicker
         onChange={(date, dateString) => {
           onChange(date, dateString);
         }}
-        defaultValue={value ? dayjs(value) : undefined}
-        allowClear
+        value={value ? dayjs(value) : null}
+        allowClear={true}
       />
     </div>
   );

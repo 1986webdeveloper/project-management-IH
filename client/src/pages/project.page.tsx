@@ -4,24 +4,23 @@ import AntTable from "@/components/elements/table/table.element";
 import { Button, Modal, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { ChangeEvent, SetStateAction, useEffect, useState } from "react";
-import AntInput from "@/components/elements/Input/Input.element";
+import { ChangeEvent, SetStateAction, useState } from "react";
 import { ProjectDTO } from "@/types/fieldTypes";
 import AntSelect from "@/components/elements/select/select.element";
 import {
   ProjectPriority,
   ProjectStatus,
-  TecnologyList,
   initProject,
+  technologyConstant,
 } from "@/constants/project.constants";
 import AntDatePicker from "@/components/elements/datePicker/datePicker.element";
 import { Dayjs } from "dayjs";
 import AntMultiSelect from "@/components/elements/multiSelect/multiSelect.element";
-import ProjectService from "@/utils/service/project.service";
-
 import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
 import ProjectProvider from "@/providers/project .provider";
+import AntInput from "@/components/elements/Input/Input.element";
+import ProjectService from "@/utils/service/project.service";
 
 interface DataType {
   key: string;
@@ -81,11 +80,12 @@ interface DataType {
 
 const Project = () => {
   const [open, setOpen] = useState(false);
-  const [projectDetails, setProjectDetails] = useState(initProject);
+  const [projectDetails, setProjectDetails] = useState(
+    initProject as ProjectDTO,
+  );
   const [selectedItem, setSelectedItems] = useState<string[]>([]);
-
-  const [isEdit, setEdit] = useState(false);
   const { CreateProject, UpdateProject } = ProjectService();
+  const [isEdit, setEdit] = useState(false);
   const projectList = useSelector(
     (state: RootState) => state.project.projectList,
   );
@@ -178,22 +178,34 @@ const Project = () => {
   const showModal = () => {
     console.log("helo im  here in model---");
     console.log("ths.project detail---", projectDetails);
+    setProjectDetails(initProject);
     setOpen(true);
   };
   const handleSave = () => {
-    console.log({ isEdit });
-    console.log({ projectDetails });
-    // if (!isEdit) {
-    //   CreateProject({
-    //     payload: projectDetails,
-    //   });
-    // }
-    // if (isEdit) {
-    //   UpdateProject({
-    //     payload: projectDetails,
-    //     projectId: "657820a1babcf125adc29116",
-    //   });
-    // }
+    // todo : please add local redux state of perticular list for Create APi.
+    // todo : add new object coming in response add into that
+    // todo :  and for edit project also get updated project into response add that in to response.
+    // todo :  to legendary dhyan
+
+    const _payload = {
+      ...projectDetails,
+      tecnologyList: selectedItem,
+      estimatedHours: Number(projectDetails.estimatedHours),
+    };
+
+    if (!isEdit) {
+      CreateProject({
+        payload: _payload,
+        setOpen: setOpen,
+      });
+    }
+    if (isEdit) {
+      UpdateProject({
+        payload: _payload,
+        projectId: projectDetails._id ?? "",
+        setOpen: setOpen,
+      });
+    }
   };
   const handleCancel = () => {
     setProjectDetails(initProject);
@@ -220,8 +232,6 @@ const Project = () => {
 
     setProjectDetails({ ...projectDetails, [id]: dateString });
   };
-  // console.log(projectDetails, "------latest");
-  // console.log(typeof selectedDate);
 
   return (
     <ProjectProvider>
@@ -241,17 +251,6 @@ const Project = () => {
         <AntCard cardTitle="PROJECT SUMMARY">
           <AntTable columns={columns} data={projectList}></AntTable>
         </AntCard>
-        {/* 
-        {selectedDate?.length > 0 && (
-          <AntDatePicker
-            name={"startDate"}
-            value={selectedDate ? selectedDate : ""}
-            label="Start Date"
-            onChange={(date, dateString) =>
-              handleDateSelect(date, dateString, "startDate")
-            }
-          ></AntDatePicker>
-        )} */}
 
         <Modal
           open={open}
@@ -281,10 +280,10 @@ const Project = () => {
               onChange={handleChange}
             ></AntInput>
             <AntInput
-              name={"customer"}
-              label="Customer"
+              name={"clientId"}
+              label="ClientId"
               placeHolder={"Enter Your Customer Name"}
-              value={projectDetails.client}
+              value={projectDetails.clientId}
               onChange={handleChange}
             ></AntInput>
             <div className="flex gap-5">
@@ -348,7 +347,7 @@ const Project = () => {
               value={projectDetails.technologyList}
               label="Technology"
               placeHolder="Select Technology"
-              options={TecnologyList}
+              options={technologyConstant}
               selectedItems={selectedItem}
               setSelectedItems={setSelectedItems}
             ></AntMultiSelect>
