@@ -35,7 +35,7 @@ export const initClient: ClientDTO = {
 	clientName: '',
 	onBoardingDate: '',
 	industry: '',
-	manager: '',
+	managerList: [],
 	_id: '',
 };
 

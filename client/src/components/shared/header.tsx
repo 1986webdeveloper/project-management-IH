@@ -1,17 +1,25 @@
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Badge, Popover, Tabs } from 'antd';
+import { Avatar, Badge, Button, Popover, Tabs } from 'antd';
 import { ROUTES, RouteMenu } from '@/constants/routes.constants';
 import { useNavigate } from 'react-router-dom';
+import AuthServices from '@/utils/service/auth.service';
+import { useDispatch } from 'react-redux';
 
 const CustomHeader = () => {
 	const navigate = useNavigate();
+	const { LogoutService } = AuthServices();
+	const dispatch = useDispatch();
 	const onTabChange = (key: string) => {
 		const index = Number(key) - 1;
 		navigate(RouteMenu[index].route);
 	};
 
-	const AvtarPoptemplate = () => {
-		return <div>hello logout</div>;
+	const AvatarPopTemplate = () => {
+		return (
+			<Button danger type="primary" onClick={() => LogoutService({ dispatch })}>
+				Logout
+			</Button>
+		);
 	};
 	return (
 		<div className="flex p-4 items-center justify-between w-full shadow-xl">
@@ -41,8 +49,8 @@ const CustomHeader = () => {
 				</div>
 			</div>
 			<div>
-				<Popover content={AvtarPoptemplate} title="Title">
-					<Badge count={3}>
+				<Popover content={AvatarPopTemplate}>
+					<Badge count={1}>
 						<Avatar shape="circle" icon={<UserOutlined />} />
 					</Badge>
 					{}

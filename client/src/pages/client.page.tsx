@@ -5,18 +5,18 @@ import AntTable from '@/components/elements/table/table.element';
 import { ColumnsType } from 'antd/es/table';
 import { EditOutlined } from '@ant-design/icons';
 import { DeleteOutlined } from '@ant-design/icons';
-import ClientProvider from '@/providers/client.provider';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { ClientDTO } from '@/types/fieldTypes';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import AntInput from '@/components/elements/Input/Input.element';
 import AntDatePicker from '@/components/elements/datePicker/datePicker.element';
 import { Dayjs } from 'dayjs';
-
 import ClientService from '@/utils/service/client.service';
 import { errorToastHelper } from '@/utils/helper/toast.helper';
 import { initClient } from '@/constants/general.constants';
+import AntMultiSelect from '@/components/elements/multiSelect/multiSelect.element';
 
 const Client = () => {
 	const [open, setOpen] = useState(false);
@@ -24,8 +24,14 @@ const Client = () => {
 	const [loading, setLoading] = useState(false);
 	const [clientDetails, setClientDetails] = useState(initClient);
 	const clientList = useSelector((state: RootState) => state.client.clientList);
+	const userList = useSelector((state: RootState) => state.user.userList);
 	const { CreateClient, DeleteClient, UpdateClient } = ClientService();
+
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		console.log(userList);
+	}, []);
 
 	const columns: ColumnsType<ClientDTO> = [
 		{
@@ -110,7 +116,6 @@ const Client = () => {
 		DeleteClient({
 			clientId: data?._id ?? '',
 			setLoading,
-			clientList,
 			dispatch,
 		});
 	};
@@ -120,7 +125,6 @@ const Client = () => {
 			CreateClient({
 				payload: clientDetails,
 				setOpen: setOpen,
-				clientList,
 				dispatch,
 				setLoading,
 			});
@@ -130,11 +134,14 @@ const Client = () => {
 				payload: clientDetails,
 				setIsEdit: setEdit,
 				setOpen: setOpen,
-				clientList,
 				dispatch,
 				setLoading,
 			});
 		}
+	};
+
+	const handleMultiSelect = (e: any, name: string) => {
+		console.log(e);
 	};
 
 	return (
@@ -168,7 +175,7 @@ const Client = () => {
 				okText={isEdit ? 'Update' : 'Save'}
 				cancelButtonProps={{ danger: true, type: 'primary' }}
 			>
-				<div className="grid py-7 grid-rows-2 text-blue-950 grid-flow-col gap-8 items-start w-[100%]">
+				<div className="grid py-7 grid-rows-2 text-blue-950 grid-flow-col gap-16 items-start w-[100%]">
 					<AntInput
 						name={'clientName'}
 						label="Client Name"
@@ -183,12 +190,16 @@ const Client = () => {
 						value={clientDetails.industry}
 						onChange={handleChange}
 					/>
-					<AntInput
-						name={'manager'}
-						label="Manager"
-						placeHolder={'Enter name of manager'}
-						value={clientDetails.manager}
-						onChange={handleChange}
+					<AntMultiSelect
+						width={330}
+						value={clientDetails.managerList}
+						label="Managers"
+						placeHolder="Select manager"
+						options={userList}
+						onChange={e => {
+							handleMultiSelect(e, 'technologyList');
+						}}
+						optionLabel={'name'}
 					/>
 					<AntDatePicker
 						name={'onBoardingDate'}

@@ -4,7 +4,7 @@ import { UserService } from '../services/user.service';
 import { encryptionHelper } from '../helpers/encryption.helper';
 import { AuthService } from '../services/auth.service';
 import { UserInterface } from '../Interfaces/user.interface';
-import { SignUpValidation, LoginValidation } from '../validations/user.validation';
+import { UserValidation, LoginValidation } from '../validations/user.validation';
 import { checkValidation } from '../helpers/validation.helper';
 import { decryptionHelper } from '../helpers/decryption.helper';
 import { tokenHelper } from '../helpers/token.helper';
@@ -13,9 +13,9 @@ import { sendMailer } from '../helpers/mailer.helper';
 export default class AuthController {
 	protected readonly Signup = async (req: Request, res: Response) => {
 		try {
-			const payload: SignUpValidation = req.body;
+			const payload: UserValidation = req.body;
 			// Validation of body
-			const validObj = new SignUpValidation();
+			const validObj = new UserValidation();
 			Object.assign(validObj, payload);
 			const _errMessage = await checkValidation(validObj);
 			if (_errMessage) {
@@ -60,21 +60,20 @@ export default class AuthController {
 	protected readonly Login = async (req: Request, res: Response) => {
 		try {
 			const payload: LoginValidation = req.body;
-			// validate
+			// * validate
 			const validObj = new LoginValidation();
 			Object.assign(validObj, payload);
 			const _errMessage = await checkValidation(validObj);
 			if (_errMessage) {
 				return res.status(422).json(errorResponseHelper({ message: _errMessage, status: 'Error', statusCode: 422 }));
 			}
-			// Compare and validate password
+			// * Compare and validate password
 			const user = await UserService.getUserByEmailLean(payload.email);
 			const decryptedPassword = decryptionHelper(user.password);
 
 			if (user && payload.password === decryptedPassword) {
 				const accessToken = tokenHelper(user);
 				const _responseObj: any = { name: user.name, email: user.email, userId: user._id, accessToken };
-				// sendMailer(user.email, decryptedPassword);
 				return res.status(200).json(
 					successResponseHelper({
 						message: 'User logged in successfully',

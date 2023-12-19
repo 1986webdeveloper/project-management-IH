@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { API_LIST } from '../../config/api.config';
 import { RequestHelper } from '../helper/request.helper';
-import { toast } from 'react-toastify';
 import { Dispatch } from 'react';
 import { UnknownAction } from '@reduxjs/toolkit';
 import { setClientList } from '@/store/slices/clientSlice';
@@ -12,7 +11,6 @@ interface createClientProps {
 	payload: ClientDTO;
 	setOpen: (e: boolean) => void;
 	dispatch: Dispatch<UnknownAction>;
-	clientList: ClientDTO[];
 	setLoading: (e: boolean) => void;
 }
 interface updateClientProps {
@@ -20,7 +18,6 @@ interface updateClientProps {
 	setIsEdit: (e: boolean) => void;
 	setOpen: (e: boolean) => void;
 	dispatch: Dispatch<UnknownAction>;
-	clientList: ClientDTO[];
 	setLoading: (e: boolean) => void;
 }
 interface getClientListProps {
@@ -30,18 +27,16 @@ interface getClientListProps {
 interface DeleteClientProps {
 	clientId: string;
 	setLoading: (e: boolean) => void;
-	clientList: ClientDTO[];
 	dispatch: Dispatch<UnknownAction>;
 }
 
 const ClientService = () => {
-	const CreateClient = ({ payload, setOpen, clientList, dispatch, setLoading }: createClientProps) => {
+	const CreateClient = ({ payload, setOpen, dispatch, setLoading }: createClientProps) => {
 		setLoading(true);
 		axios(RequestHelper('POST', API_LIST.CREATE_CLIENT, { payload }))
 			.then((response: any) => {
 				const _data = response.data;
-				const newList = [...clientList, _data.data];
-				dispatch(setClientList(newList));
+				GetClient({ dispatch, setLoading });
 				setOpen(false);
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
@@ -53,7 +48,7 @@ const ClientService = () => {
 			});
 	};
 
-	const UpdateClient = ({ payload, setIsEdit, setOpen, clientList, dispatch, setLoading }: updateClientProps) => {
+	const UpdateClient = ({ payload, setIsEdit, setOpen, dispatch, setLoading }: updateClientProps) => {
 		setLoading(true);
 		axios(
 			RequestHelper('PUT', API_LIST.UPDATE_CLIENT + `${payload._id}`, {
@@ -62,15 +57,7 @@ const ClientService = () => {
 		)
 			.then((response: any) => {
 				const _data = response.data;
-				const _allClients = [...clientList];
-				const updatedUser = _data.data;
-				const index = _allClients.findIndex(obj => obj._id === updatedUser._id);
-				if (index !== -1) {
-					_allClients.splice(index, 1, updatedUser);
-					console.log(_allClients);
-					dispatch(setClientList(_allClients));
-				} else throw errorToastHelper('Cannot update the client.');
-
+				GetClient({ dispatch, setLoading });
 				setOpen(false);
 				setIsEdit(false);
 				setLoading(false);
@@ -98,17 +85,12 @@ const ClientService = () => {
 			});
 	};
 
-	const DeleteClient = ({ clientId, setLoading, clientList, dispatch }: DeleteClientProps) => {
+	const DeleteClient = ({ clientId, setLoading, dispatch }: DeleteClientProps) => {
 		setLoading(true);
 		axios(RequestHelper('DELETE', API_LIST.DELETE_CLIENT + `${clientId}`))
 			.then((response: any) => {
 				const _data = response.data;
-				const _allClients = [...clientList];
-				const index = _allClients.findIndex(obj => obj._id === clientId);
-				if (index !== -1) {
-					_allClients.splice(index, 1);
-					dispatch(setClientList(_allClients));
-				} else throw errorToastHelper('Cannot Delete the client.');
+				GetClient({ dispatch, setLoading });
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})

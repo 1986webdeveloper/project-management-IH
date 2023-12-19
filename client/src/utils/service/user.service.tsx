@@ -1,45 +1,41 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { API_LIST } from '@/config/api.config';
+import { UserDTO } from '@/types/auth.types';
+import { Dispatch, UnknownAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { API_LIST } from '../../config/api.config';
 import { RequestHelper } from '../helper/request.helper';
-import { Dispatch } from 'react';
-import { UnknownAction } from '@reduxjs/toolkit';
-import { setProjectList } from '@/store/slices/projectSlice';
-import { errorToastHelper, successToastHelper } from '../helper/toast.helper';
+import { successToastHelper, errorToastHelper } from '../helper/toast.helper';
+import { setUserList } from '@/store/slices/userSlice';
 
-interface createProjectProps {
-	payload: any;
+interface createUserProps {
+	payload: UserDTO;
 	setOpen: (e: boolean) => void;
 	dispatch: Dispatch<UnknownAction>;
 
 	setLoading: (e: boolean) => void;
 }
-interface updateProjectProps {
-	payload: any;
+interface updateUserProps {
+	payload: UserDTO;
 	setIsEdit: (e: boolean) => void;
 	setOpen: (e: boolean) => void;
-
 	dispatch: Dispatch<UnknownAction>;
 	setLoading: (e: boolean) => void;
 }
-interface getProjectListProps {
+interface getUserListProps {
 	dispatch: Dispatch<UnknownAction>;
 	setLoading: (e: boolean) => void;
 }
-
-interface DeleteProjectProps {
-	projectId: string;
+interface deleteUserProps {
+	userId: string;
 	setLoading: (e: boolean) => void;
 	dispatch: Dispatch<UnknownAction>;
 }
-
-const ProjectService = () => {
-	const CreateProject = ({ payload, setOpen, dispatch, setLoading }: createProjectProps) => {
+const UserService = () => {
+	const createUser = ({ dispatch, payload, setLoading, setOpen }: createUserProps) => {
 		setLoading(true);
-		axios(RequestHelper('POST', API_LIST.CREATE_PROJECT, { payload: payload }))
+		axios(RequestHelper('POST', API_LIST.CREATE_USER, { payload }))
 			.then((response: any) => {
 				const _data = response.data;
-				GetProject({ dispatch, setLoading });
+				getUserList({ dispatch, setLoading });
 				setOpen(false);
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
@@ -51,16 +47,16 @@ const ProjectService = () => {
 			});
 	};
 
-	const UpdateProject = ({ payload, setOpen, setIsEdit, dispatch, setLoading }: updateProjectProps) => {
+	const updateUser = ({ dispatch, payload, setIsEdit, setLoading, setOpen }: updateUserProps) => {
 		setLoading(true);
 		axios(
-			RequestHelper('PUT', API_LIST.UPDATE_PROJECT + `${payload._id}`, {
+			RequestHelper('PUT', API_LIST.UPDATE_USER + `${payload._id}`, {
 				payload: payload,
 			}),
 		)
 			.then((response: any) => {
 				const _data = response.data;
-				GetProject({ dispatch, setLoading });
+				getUserList({ dispatch, setLoading });
 				setOpen(false);
 				setIsEdit(false);
 				setLoading(false);
@@ -73,28 +69,27 @@ const ProjectService = () => {
 			});
 	};
 
-	const GetProject = ({ dispatch, setLoading }: getProjectListProps) => {
+	const getUserList = ({ dispatch, setLoading }: getUserListProps) => {
 		setLoading(true);
-		axios(RequestHelper('GET', API_LIST.GET_PROJECT))
+		axios(RequestHelper('GET', API_LIST.GET_USER))
 			.then((response: any) => {
 				const _data: any = response.data.data;
-				dispatch(setProjectList(_data));
+				dispatch(setUserList(_data));
 				setLoading(false);
 			})
 			.catch(error => {
 				const errorMessage = error?.response?.data?.error;
-				console.log(errorMessage);
 				errorToastHelper(errorMessage);
 				setLoading(false);
 			});
 	};
 
-	const DeleteProject = ({ projectId, setLoading, dispatch }: DeleteProjectProps) => {
+	const deleteUser = ({ userId, dispatch, setLoading }: deleteUserProps) => {
 		setLoading(true);
-		axios(RequestHelper('DELETE', API_LIST.DELETE_PROJECT + `${projectId}`))
+		axios(RequestHelper('DELETE', API_LIST.DELETE_USER + `${userId}`))
 			.then((response: any) => {
 				const _data = response.data;
-				GetProject({ dispatch, setLoading });
+				getUserList({ dispatch, setLoading });
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})
@@ -104,13 +99,7 @@ const ProjectService = () => {
 				setLoading(false);
 			});
 	};
-
-	return {
-		CreateProject,
-		UpdateProject,
-		GetProject,
-		DeleteProject,
-	};
+	return { createUser, updateUser, deleteUser, getUserList };
 };
 
-export default ProjectService;
+export default UserService;

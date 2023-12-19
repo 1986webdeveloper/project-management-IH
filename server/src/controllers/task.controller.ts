@@ -10,7 +10,6 @@ export default class TaskController {
 	protected readonly CreateTask = async (req: Request, res: Response) => {
 		try {
 			const payload: CreateTaskValidation = req.body;
-
 			const validObj = new CreateTaskValidation();
 			Object.assign(validObj, payload);
 			const _errMessage = await checkValidation(validObj);

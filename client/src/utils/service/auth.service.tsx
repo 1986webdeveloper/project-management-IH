@@ -8,7 +8,7 @@ import { Dispatch } from 'react';
 import { setLoggedIn } from '@/store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes.constants';
-import { setToken } from '../helper/token.helper';
+import { RemoveToken, setToken } from '../helper/token.helper';
 import { errorToastHelper, successToastHelper } from '../helper/toast.helper';
 
 interface LoginServiceProps {
@@ -25,6 +25,10 @@ interface SignUpProps {
 interface forgotPasswordProps {
 	email: string;
 	setLoading: (e: boolean) => void;
+}
+
+interface logoutServiceProps {
+	dispatch: Dispatch<UnknownAction>;
 }
 
 const AuthServices = () => {
@@ -80,10 +84,17 @@ const AuthServices = () => {
 			});
 	};
 
+	const LogoutService = ({ dispatch }: logoutServiceProps) => {
+		RemoveToken();
+		dispatch(setLoggedIn(false));
+		navigate(ROUTES.LOGIN);
+	};
+
 	return {
 		LoginServices,
 		SignUpService,
 		ForgotPasswordService,
+		LogoutService,
 	};
 };
 

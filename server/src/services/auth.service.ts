@@ -10,6 +10,7 @@ export const AuthService = new (class {
 			name: userData.name,
 			designation: userData.designation,
 			role: userData.role,
+			_id: userData._id,
 		});
 
 		if (user) {

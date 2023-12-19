@@ -1,7 +1,7 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { RoleEnum } from '../Interfaces/general.interface';
 
-export class SignUpValidation {
+export class UserValidation {
 	@IsNotEmpty()
 	@IsString()
 	name!: string;

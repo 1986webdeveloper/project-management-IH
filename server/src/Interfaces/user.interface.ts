@@ -1,4 +1,4 @@
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { RoleEnum } from './general.interface';
 
 export interface UserInterface extends Document {
@@ -7,4 +7,5 @@ export interface UserInterface extends Document {
 	password: string;
 	designation: string;
 	role: RoleEnum;
+	_id?: Types.ObjectId;
 }

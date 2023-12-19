@@ -11,7 +11,6 @@ interface createTaskProps {
 	payload: TaskDTO;
 	setOpen: (e: boolean) => void;
 	dispatch: Dispatch<UnknownAction>;
-	taskList: TaskDTO[];
 	setLoading: (e: boolean) => void;
 }
 interface updateTaskProps {
@@ -19,7 +18,6 @@ interface updateTaskProps {
 	setIsEdit: (e: boolean) => void;
 	setOpen: (e: boolean) => void;
 	dispatch: Dispatch<UnknownAction>;
-	taskList: TaskDTO[];
 	setLoading: (e: boolean) => void;
 }
 interface getTaskListProps {
@@ -29,18 +27,16 @@ interface getTaskListProps {
 interface deleteTaskProps {
 	taskId: string;
 	setLoading: (e: boolean) => void;
-	taskList: TaskDTO[];
 	dispatch: Dispatch<UnknownAction>;
 }
 
 const TaskService = () => {
-	const CreateTask = ({ taskList, dispatch, payload, setLoading, setOpen }: createTaskProps) => {
+	const CreateTask = ({ dispatch, payload, setLoading, setOpen }: createTaskProps) => {
 		setLoading(true);
 		axios(RequestHelper('POST', API_LIST.CREATE_TASK, { payload }))
 			.then((response: any) => {
 				const _data = response.data;
-				const newList = [...taskList, _data.data];
-				dispatch(setTaskList(newList));
+				getTaskList({ dispatch, setLoading });
 				setOpen(false);
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
@@ -51,7 +47,7 @@ const TaskService = () => {
 				setLoading(false);
 			});
 	};
-	const UpdateTask = ({ dispatch, payload, setIsEdit, setLoading, setOpen, taskList }: updateTaskProps) => {
+	const UpdateTask = ({ dispatch, payload, setIsEdit, setLoading, setOpen }: updateTaskProps) => {
 		setLoading(true);
 		axios(
 			RequestHelper('PUT', API_LIST.UPDATE_TASK + `${payload._id}`, {
@@ -60,14 +56,7 @@ const TaskService = () => {
 		)
 			.then((response: any) => {
 				const _data = response.data;
-				const _allTask = [...taskList];
-				const updatedUser = _data.data;
-				const index = _allTask.findIndex(obj => obj._id === updatedUser._id);
-				if (index !== -1) {
-					_allTask.splice(index, 1, updatedUser);
-					console.log(_allTask);
-					dispatch(setTaskList(_allTask));
-				} else throw errorToastHelper('Cannot update the task.');
+				getTaskList({ dispatch, setLoading });
 				setOpen(false);
 				setIsEdit(false);
 				setLoading(false);
@@ -93,17 +82,12 @@ const TaskService = () => {
 				setLoading(false);
 			});
 	};
-	const deleteTask = ({ taskList, taskId, dispatch, setLoading }: deleteTaskProps) => {
+	const deleteTask = ({ taskId, dispatch, setLoading }: deleteTaskProps) => {
 		setLoading(true);
 		axios(RequestHelper('DELETE', API_LIST.DELETE_TASK + `${taskId}`))
 			.then((response: any) => {
 				const _data = response.data;
-				const _allTask = [...taskList];
-				const index = _allTask.findIndex(obj => obj._id === taskId);
-				if (index !== -1) {
-					_allTask.splice(index, 1);
-					dispatch(setTaskList(_allTask));
-				} else throw errorToastHelper('Cannot Delete the task.');
+				getTaskList({ dispatch, setLoading });
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})

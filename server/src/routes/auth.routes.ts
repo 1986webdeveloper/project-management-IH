@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import AuthController from '../controllers/auth.controller';
 
-export default class User extends AuthController {
+export default class Auth extends AuthController {
 	public router = Router();
 
 	constructor() {

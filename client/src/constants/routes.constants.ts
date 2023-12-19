@@ -7,10 +7,12 @@ export const ROUTES = {
 	PROJECT: 'project',
 	CLIENT: 'client',
 	TASK: 'task',
+	USER: 'user',
 };
 
 export const RouteMenu = [
-	{ key: 1, route: ROUTES.PROJECT, label: 'Project' },
+	{ key: 1, route: ROUTES.USER, label: 'User' },
 	{ key: 2, route: ROUTES.CLIENT, label: 'Client' },
-	{ key: 3, route: ROUTES.TASK, label: 'Task' },
+	{ key: 3, route: ROUTES.PROJECT, label: 'Project' },
+	{ key: 4, route: ROUTES.TASK, label: 'Task' },
 ];

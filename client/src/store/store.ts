@@ -3,6 +3,7 @@ import authReducer from './slices/authSlice';
 import projectReducer from './slices/projectSlice';
 import clientReducer from './slices/clientSlice';
 import taskReducer from './slices/taskSlice';
+import userReducer from './slices/userSlice';
 
 export const makeStore = () => {
 	return configureStore({
@@ -11,6 +12,7 @@ export const makeStore = () => {
 			project: projectReducer,
 			client: clientReducer,
 			task: taskReducer,
+			user: userReducer,
 		},
 	});
 };

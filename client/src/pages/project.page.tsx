@@ -21,7 +21,6 @@ const Project = () => {
 	const [open, setOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [projectDetails, setProjectDetails] = useState(initProject);
-	const [selectedItem, setSelectedItems] = useState<string[]>([]);
 	const { CreateProject, UpdateProject, DeleteProject } = ProjectService();
 	const [isEdit, setEdit] = useState(false);
 	const projectList = useSelector((state: RootState) => state.project.projectList);
@@ -69,11 +68,6 @@ const Project = () => {
 			},
 		},
 		{
-			title: <span className="text-blue-950">Profile</span>,
-			dataIndex: 'profile',
-			key: 'profile',
-		},
-		{
 			title: <span className="text-blue-950">Action</span>,
 			dataIndex: 'action',
 			key: 'action',
@@ -81,7 +75,6 @@ const Project = () => {
 				return (
 					<div className="flex gap-5">
 						<EditOutlined className="hover:text-blue-500" onClick={() => onEdit(rowData)} />
-
 						<Popconfirm
 							title="Delete the project"
 							description="Are you sure to delete this project?"
@@ -121,7 +114,7 @@ const Project = () => {
 	// *modal actions
 	const handleCancel = () => {
 		setProjectDetails(initProject);
-		setSelectedItems([]);
+
 		setOpen(false);
 		setEdit(false);
 	};
@@ -131,29 +124,26 @@ const Project = () => {
 		setOpen(true);
 	};
 
+	const handleMultiSelect = (e: any, name: string) => {
+		setProjectDetails({ ...projectDetails, [name]: e });
+	};
+
 	// *FormActions
 
 	const onSubmit = () => {
-		const _payload = {
-			...projectDetails,
-			tecnologyList: selectedItem,
-		};
-
 		if (!isEdit) {
 			CreateProject({
-				payload: _payload,
+				payload: projectDetails,
 				setOpen: setOpen,
-				projectList,
 				dispatch,
 				setLoading,
 			});
 		}
 		if (isEdit) {
 			UpdateProject({
-				payload: _payload,
+				payload: projectDetails,
 				setIsEdit: setEdit,
 				setOpen: setOpen,
-				projectList,
 				dispatch,
 				setLoading,
 			});
@@ -161,7 +151,6 @@ const Project = () => {
 	};
 
 	const onEdit = (data: ProjectDTO) => {
-		setSelectedItems(data.technologyList);
 		setProjectDetails(data);
 		setOpen(true);
 		setEdit(true);
@@ -169,7 +158,7 @@ const Project = () => {
 
 	const onDelete = (data: ProjectDTO) => {
 		if (!data._id) return errorToastHelper('Project ID not found!!S');
-		DeleteProject({ projectId: data?._id ?? '', setLoading, dispatch, projectList });
+		DeleteProject({ projectId: data?._id ?? '', setLoading, dispatch });
 	};
 
 	return (
@@ -203,7 +192,7 @@ const Project = () => {
 				okText={isEdit ? 'Update' : 'Save'}
 				cancelButtonProps={{ danger: true, type: 'primary' }}
 			>
-				<div className="grid py-7 grid-rows-5 text-blue-950 grid-flow-col gap-2 items-start w-[100%]">
+				<div className="grid py-7 grid-rows-5 text-blue-950 grid-flow-col  items-start w-[100%]">
 					<AntInput
 						name={'projectName'}
 						label="Project Name"
@@ -266,11 +255,13 @@ const Project = () => {
 					<AntMultiSelect
 						width={330}
 						value={projectDetails.technologyList}
-						label="Technology"
+						label="Technologies used"
 						placeHolder="Select Technology"
 						options={technologyConstant}
-						selectedItems={selectedItem}
-						setSelectedItems={setSelectedItems}
+						onChange={e => {
+							handleMultiSelect(e, 'technologyList');
+						}}
+						optionLabel={'label'}
 					></AntMultiSelect>
 					<AntSelect
 						options={PriorityList}

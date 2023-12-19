@@ -6,6 +6,7 @@ export const MODULES = {
 	PROJECT: `${BASEURL}/project`,
 	CLIENT: `${BASEURL}/client`,
 	TASK: `${BASEURL}/task`,
+	USER: `${BASEURL}/user`,
 };
 
 export const API_LIST = {
@@ -24,4 +25,8 @@ export const API_LIST = {
 	UPDATE_TASK: `${MODULES.TASK}/update/`,
 	GET_TASK: `${MODULES.TASK}/get`,
 	DELETE_TASK: `${MODULES.TASK}/delete/`,
+	CREATE_USER: `${MODULES.USER}/create`,
+	UPDATE_USER: `${MODULES.USER}/update/`,
+	GET_USER: `${MODULES.USER}/get`,
+	DELETE_USER: `${MODULES.USER}/delete/`,
 };

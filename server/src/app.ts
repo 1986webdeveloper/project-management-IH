@@ -4,10 +4,11 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
 //controllers
-import User from './routes/auth.routes';
+import Auth from './routes/auth.routes';
 import Project from './routes/project.routes';
 import Client from './routes/client.routes';
 import Task from './routes/task.routes';
+import User from './routes/user.routes';
 
 export default class App {
 	public static instance: express.Application;
@@ -16,10 +17,10 @@ export default class App {
 		this.instance = express();
 		this.port = port;
 
-		// Add middlewares.
+		// *Add middlewares.
 		this.initializeMiddlewares();
 
-		// Add controllers
+		// *Add controllers
 		this.initializeControllers();
 	}
 
@@ -33,20 +34,23 @@ export default class App {
 			}),
 		);
 
-		// Cookie parser.
+		// *Cookie parser.
 		this.instance.use(cookieParser(process.env.COOKIE_SECRET));
 
-		// Body Parser
+		// *Body Parser
+
 		this.instance.use(express.json({ limit: '50mb' }));
-		// support json encoded bodies
+		// *support json encoded bodies
+
 		this.instance.set('views', path.join(__dirname, 'views'));
 		this.instance.set('view engine', 'ejs');
 		this.instance.use(express.static(process.cwd() + '/public'));
 	}
 	private static initializeControllers() {
-		this.instance.use('/auth', new User().router);
+		this.instance.use('/auth', new Auth().router);
 		this.instance.use('/project', new Project().router);
 		this.instance.use('/client', new Client().router);
 		this.instance.use('/task', new Task().router);
+		this.instance.use('/user', new User().router);
 	}
 }

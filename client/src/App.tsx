@@ -1,4 +1,11 @@
-import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements, Navigate } from 'react-router-dom';
+import {
+	Route,
+	RouterProvider,
+	createBrowserRouter,
+	createRoutesFromElements,
+	Navigate,
+	useNavigate,
+} from 'react-router-dom';
 import './App.css';
 import AuthLayout from './layouts/authLayout/auth.layout';
 import Login from './pages/auth/login.page';
@@ -6,8 +13,6 @@ import Register from './pages/auth/register.page';
 import { Home } from './pages/home.page';
 import DefaultLayout from './layouts/defaultLayout/default.layout';
 import { ROUTES } from './constants/routes.constants';
-// import { useSelector } from "react-redux";
-// import { RootState } from "./store/store";
 import ForgotPassword from './pages/auth/forgotPassword.page';
 import ResetPassword from './pages/auth/resetPassword.page';
 import Project from './pages/project.page';
@@ -15,6 +20,7 @@ import Client from './pages/client.page';
 import { useSelector } from 'react-redux';
 import { RootState } from './store/store';
 import Task from './pages/task.page';
+import User from './pages/user.page';
 
 function App() {
 	const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
@@ -27,6 +33,7 @@ function App() {
 					<Route path={ROUTES.PROJECT} element={<Project />} />
 					<Route path={ROUTES.CLIENT} element={<Client />} />
 					<Route path={ROUTES.TASK} element={<Task />} />
+					<Route path={ROUTES.USER} element={<User />} />
 					{/* <Route path={""} element={""} /> */}
 				</>
 			) : (

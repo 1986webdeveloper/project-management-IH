@@ -94,7 +94,7 @@ const Task = () => {
 		deleteTask({
 			taskId: data?._id ?? '',
 			setLoading,
-			taskList,
+
 			dispatch,
 		});
 	};
@@ -104,7 +104,6 @@ const Task = () => {
 			CreateTask({
 				payload: taskDetails,
 				setOpen: setOpen,
-				taskList,
 				dispatch,
 				setLoading,
 			});
@@ -114,7 +113,6 @@ const Task = () => {
 				payload: taskDetails,
 				setIsEdit: setEdit,
 				setOpen: setOpen,
-				taskList,
 				dispatch,
 				setLoading,
 			});
@@ -173,7 +171,7 @@ const Task = () => {
 				okText={isEdit ? 'Update' : 'Save'}
 				cancelButtonProps={{ danger: true, type: 'primary' }}
 			>
-				<div className="grid py-4 grid-rows-5 text-blue-950 grid-flow-col gap-8 items-start w-[100%]">
+				<div className="grid py-4 grid-rows-5 text-blue-950 grid-flow-col gap-16 items-start w-[100%]">
 					<AntInput
 						name={'title'}
 						label="Title"
@@ -183,7 +181,7 @@ const Task = () => {
 					/>
 					<AntInput
 						name={'projectName'}
-						label="projectName"
+						label="Project name"
 						placeHolder={'Enter Your Project Name'}
 						value={taskDetails.projectName}
 						onChange={handleChange}
@@ -191,7 +189,7 @@ const Task = () => {
 					/>
 					<AntInput
 						name={'description'}
-						label="description"
+						label="Description"
 						placeHolder={'Enter Your Customer Name'}
 						value={taskDetails.description}
 						onChange={handleChange}

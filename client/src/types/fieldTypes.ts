@@ -28,7 +28,7 @@ export interface ClientDTO {
 	clientName: string;
 	onBoardingDate: string;
 	industry: string;
-	manager: string;
+	managerList: string[];
 	_id: string;
 }
 
