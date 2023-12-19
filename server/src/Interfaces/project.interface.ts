@@ -1,16 +1,5 @@
 import { Types } from 'mongoose';
-
-export enum StatusEnum {
-	COMPLETED = 'COMPLETED',
-	IN_PROGRESS = 'IN_PROGRESS',
-	HOLD = 'HOLD',
-}
-
-export enum PriorityEnum {
-	HIGH = 'HIGH',
-	LOW = 'LOW',
-	MEDIUM = 'MEDIUM',
-}
+import { StatusEnum } from './general.interface';
 
 export interface ProjectInterface {
 	projectName: string;

@@ -1,13 +1,14 @@
 import mongoose, { Schema } from 'mongoose';
-import { RoleEnum, UserInterface } from '../Interfaces/user.interface';
+import { UserInterface } from '../Interfaces/user.interface';
+import { RoleEnum } from '../Interfaces/general.interface';
 
 const User: Schema = new Schema(
 	{
-		name: { type: String, required: true },
-		email: { type: String, required: true, unique: true },
-		password: { type: String, required: true },
-		designation: { type: String, required: true },
-		role: { type: String, enum: RoleEnum, required: true },
+		name: { type: String },
+		email: { type: String, unique: true },
+		password: { type: String },
+		designation: { type: String },
+		role: { type: String, enum: RoleEnum },
 	},
 	{ versionKey: false },
 );

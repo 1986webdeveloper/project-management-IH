@@ -12,15 +12,11 @@ export default class ClientController {
 
 			const validObj = new CreateClientValidation();
 			Object.assign(validObj, payload);
-
 			const _errMessage = await checkValidation(validObj);
-
 			if (_errMessage) {
 				return res.status(422).json(errorResponseHelper({ message: _errMessage, status: 'Error', statusCode: 422 }));
 			}
-
 			const client: ClientInterface | null = await ClientService.createClient(payload);
-
 			if (client) {
 				return res.status(201).json(
 					successResponseHelper({
@@ -33,7 +29,7 @@ export default class ClientController {
 			} else {
 				return res
 					.status(400)
-					.json(errorResponseHelper({ message: 'Client data not found', status: 'Error', statusCode: 400 }));
+					.json(errorResponseHelper({ message: 'Cannot save client data', status: 'Error', statusCode: 400 }));
 			}
 		} catch (error) {
 			console.log(error);
@@ -48,7 +44,6 @@ export default class ClientController {
 			const clientId = req.params.id;
 			if (!clientId) {
 				const clients: ClientInterface[] = await ClientService.getClients();
-
 				return res.status(200).json(
 					successResponseHelper({
 						message: 'Client list fetched Successfully',
@@ -79,21 +74,19 @@ export default class ClientController {
 		try {
 			const clientId: string = req.params.id;
 			const payload = req.body;
-
 			const client = await ClientService.getClientById(clientId);
 			if (!clientId && !client) {
 				return res
 					.status(400)
 					.json(errorResponseHelper({ message: 'No Client found', status: 'Error', statusCode: 400 }));
 			}
-
 			const updatedClient = await ClientService.updateClient(clientId, payload);
 			if (!updatedClient) {
 				return res
 					.status(400)
 					.json(errorResponseHelper({ message: 'Client data is not valid', status: 'Error', statusCode: 400 }));
 			}
-			console.log('--------->', updatedClient);
+
 			return res.status(200).json(
 				successResponseHelper({
 					message: 'Client data updated Successfully',
@@ -117,9 +110,7 @@ export default class ClientController {
 					.status(400)
 					.json(errorResponseHelper({ message: 'No Client found', status: 'Error', statusCode: 400 }));
 			}
-
 			const isDeleted = await ClientService.deleteClient(clientId);
-
 			if (isDeleted) {
 				return res.status(200).json(
 					successResponseHelper({

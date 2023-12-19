@@ -1,21 +1,27 @@
 // Local URL
-export const BASEURL = "http://192.168.1.60:7000";
+export const BASEURL = 'http://192.168.1.60:7000';
 
 export const MODULES = {
-  AUTH: `${BASEURL}/auth`,
-  PROJECT: `${BASEURL}/project`,
-  CLIENT: `${BASEURL}/client`,
+	AUTH: `${BASEURL}/auth`,
+	PROJECT: `${BASEURL}/project`,
+	CLIENT: `${BASEURL}/client`,
+	TASK: `${BASEURL}/task`,
 };
 
 export const API_LIST = {
-  LOGIN: `${MODULES.AUTH}/login/`,
-  SIGNUP: `${MODULES.AUTH}/signup/`,
-  CREATE_PROJECT: `${MODULES.PROJECT}/create`,
-  UPDATE_PROJECT: `${MODULES.PROJECT}/update/`,
-  GET_PROJECT: `${MODULES.PROJECT}/get`,
-  DELETE_PROJECT: `${MODULES.PROJECT}/delete/`,
-  CREATE_CLIENT: `${MODULES.CLIENT}/create`,
-  UPDATE_CLIENT: `${MODULES.CLIENT}/update/`,
-  GET_CLIENT: `${MODULES.CLIENT}/get`,
-  DELETE_CLIENT: `${MODULES.CLIENT}/delete/`,
+	LOGIN: `${MODULES.AUTH}/login/`,
+	SIGN_UP: `${MODULES.AUTH}/signup/`,
+	FORGOT_PASSWORD: `${MODULES.AUTH}/forgot-pass/`,
+	CREATE_PROJECT: `${MODULES.PROJECT}/create`,
+	UPDATE_PROJECT: `${MODULES.PROJECT}/update/`,
+	GET_PROJECT: `${MODULES.PROJECT}/get`,
+	DELETE_PROJECT: `${MODULES.PROJECT}/delete/`,
+	CREATE_CLIENT: `${MODULES.CLIENT}/create`,
+	UPDATE_CLIENT: `${MODULES.CLIENT}/update/`,
+	GET_CLIENT: `${MODULES.CLIENT}/get`,
+	DELETE_CLIENT: `${MODULES.CLIENT}/delete/`,
+	CREATE_TASK: `${MODULES.TASK}/create`,
+	UPDATE_TASK: `${MODULES.TASK}/update/`,
+	GET_TASK: `${MODULES.TASK}/get`,
+	DELETE_TASK: `${MODULES.TASK}/delete/`,
 };

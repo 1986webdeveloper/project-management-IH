@@ -14,16 +14,13 @@ export default class AuthController {
 	protected readonly Signup = async (req: Request, res: Response) => {
 		try {
 			const payload: SignUpValidation = req.body;
-
 			// Validation of body
 			const validObj = new SignUpValidation();
 			Object.assign(validObj, payload);
-
 			const _errMessage = await checkValidation(validObj);
 			if (_errMessage) {
 				return res.status(422).json(errorResponseHelper({ message: _errMessage, status: 'Error', statusCode: 422 }));
 			}
-
 			//Checking for duplicate user
 			const userExists = await UserService.getUserByEmail(payload.email);
 			if (userExists) {
@@ -31,15 +28,12 @@ export default class AuthController {
 					.status(403)
 					.json(errorResponseHelper({ message: 'User already registered', status: 'Error', statusCode: 403 }));
 			}
-
 			// Password hashing
 			const hashedPassword = encryptionHelper(payload.password);
-
 			const user: UserInterface | null = await AuthService.registerUser({
 				...payload,
 				password: hashedPassword,
 			} as UserInterface);
-
 			// storing into database
 			if (user) {
 				const resData = { email: user.email, name: user.name };
@@ -136,7 +130,6 @@ export default class AuthController {
 				mailText: `Your request to reset password is accepted, your new password is ${_tempPassword}  `,
 				subject: 'Forgot password request',
 			});
-			
 
 			return res.status(200).json(
 				successResponseHelper({

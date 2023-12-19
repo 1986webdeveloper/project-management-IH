@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import User from './routes/auth.routes';
 import Project from './routes/project.routes';
 import Client from './routes/client.routes';
+import Task from './routes/task.routes';
 
 export default class App {
 	public static instance: express.Application;
@@ -46,5 +47,6 @@ export default class App {
 		this.instance.use('/auth', new User().router);
 		this.instance.use('/project', new Project().router);
 		this.instance.use('/client', new Client().router);
+		this.instance.use('/task', new Task().router);
 	}
 }

@@ -9,7 +9,7 @@ import {
 	ValidateNested,
 } from 'class-validator';
 import { Types } from 'mongoose';
-import { StatusEnum } from '../Interfaces/project.interface';
+import { StatusEnum } from '../Interfaces/general.interface';
 
 export class ProjectTechnology {
 	@IsString()

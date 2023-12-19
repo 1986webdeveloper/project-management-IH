@@ -1,38 +1,3 @@
 export const Home = () => {
-  return (
-    <div className="bg-red-600">
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-      <div>HOME</div>
-    </div>
-  );
+	return <div className="flex items-center justify-center  bg-white-100 h-[80vh]">Home Page coming soon</div>;
 };

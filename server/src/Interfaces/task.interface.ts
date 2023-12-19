@@ -3,12 +3,13 @@ import { Types } from 'mongoose';
 export interface TaskInterface {
 	title: string;
 	description: string;
-	startDate: Date;
-	endDate: Date;
+	startDate: string;
+	endDate: string;
 	reportedBy: string;
 	reportingManager: string;
 	assignee: string;
 	status: string;
 	priority: string;
-	projectId: Types.ObjectId;
+	projectName: Types.ObjectId;
+	_id?: string;
 }

@@ -1,11 +1,5 @@
 import { Document } from 'mongoose';
-
-export enum RoleEnum {
-	ADMIN = 'ADMIN',
-	HR = 'HR',
-	MANAGER = 'MANAGER',
-	EMPLOYEE = 'EMPLOYEE',
-}
+import { RoleEnum } from './general.interface';
 
 export interface UserInterface extends Document {
 	name: string;

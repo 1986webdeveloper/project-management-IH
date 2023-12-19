@@ -14,7 +14,7 @@ export const UserService = new (class {
 	};
 
 	updateUser = async (userId: string, updateObj: any) => {
-		const update = await User.findByIdAndUpdate(userId, updateObj);
+		const update = await User.findByIdAndUpdate(userId, updateObj, { returnDocument: 'after' }).exec();
 		return update;
 	};
 })();

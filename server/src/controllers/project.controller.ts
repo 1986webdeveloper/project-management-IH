@@ -12,11 +12,9 @@ export default class ProjectController {
 			const validObj = new CreateProjectValidation();
 			Object.assign(validObj, payload);
 			const _errMessage = await checkValidation(validObj);
-
 			if (_errMessage) {
 				return res.status(422).json(errorResponseHelper({ message: _errMessage, status: 'Error', statusCode: 422 }));
 			}
-
 			const project: ProjectInterface | null = await ProjectService.createProject(payload);
 			if (project) {
 				return res.status(201).json(
@@ -43,7 +41,6 @@ export default class ProjectController {
 	protected readonly ProjectList = async (req: Request, res: Response) => {
 		try {
 			const projects: ProjectInterface[] = await ProjectService.getProjects();
-
 			if (projects.length > 0) {
 				return res.status(200).json(
 					successResponseHelper({
@@ -69,17 +66,13 @@ export default class ProjectController {
 		try {
 			const projectId: string = req.params._id;
 			const payload = req.body;
-
 			const isAvailable = await ProjectService.isProjectAvailable(projectId);
-
 			if (!projectId && !isAvailable) {
 				return res
 					.status(400)
 					.json(errorResponseHelper({ message: 'No Project found', status: 'Error', statusCode: 400 }));
 			}
-
 			const updatedProject = await ProjectService.updateProject(projectId, payload);
-
 			if (updatedProject) {
 				return res.status(200).json(
 					successResponseHelper({
@@ -110,9 +103,7 @@ export default class ProjectController {
 					.status(400)
 					.json(errorResponseHelper({ message: 'No Project found', status: 'Error', statusCode: 400 }));
 			}
-
 			const isDeleted = await ProjectService.deleteProject(projectId);
-
 			if (isDeleted) {
 				return res.status(200).json(
 					successResponseHelper({
