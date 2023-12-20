@@ -1,6 +1,6 @@
 // authSlice.ts
 
-import { getToken } from "@/helpers/localstorage.helper";
+import { getToken } from "@/utils/helper/localstorage.helper";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface AuthState {

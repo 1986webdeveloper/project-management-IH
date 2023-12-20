@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getToken } from "./token.helper";
+import { getToken } from "./localstorage.helper";
 
 export const RequestHelper = (
   method: "GET" | "POST" | "PUT" | "DELETE",

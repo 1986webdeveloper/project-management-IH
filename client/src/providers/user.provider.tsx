@@ -1,22 +1,26 @@
-import UserService from '@/utils/service/user.service';
-import { Spin } from 'antd';
-import { ReactNode, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import ClientService from "@/utils/service/client.service";
+import UserService from "@/utils/service/user.service";
+import { Spin } from "antd";
+import { ReactNode, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 type Props = {
-	children: ReactNode;
+  children: ReactNode;
 };
 
 const UserProvider = (props: Props) => {
-	const [loading, setLoading] = useState(false);
-	const { getUserList } = UserService();
-	const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const { getUserList } = UserService();
+  const { GetClient } = ClientService();
 
-	useEffect(() => {
-		getUserList({ dispatch, setLoading });
-	}, []);
+  const dispatch = useDispatch();
 
-	return <Spin spinning={loading}>{props.children}</Spin>;
+  useEffect(() => {
+    getUserList({ dispatch, setLoading });
+    GetClient({ dispatch, setLoading });
+  }, []);
+
+  return <Spin spinning={loading}>{props.children}</Spin>;
 };
 
 export default UserProvider;
