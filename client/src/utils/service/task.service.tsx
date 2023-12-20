@@ -41,9 +41,9 @@ const TaskService = () => {
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'CreateError');
 				setLoading(false);
 			});
 	};
@@ -62,9 +62,9 @@ const TaskService = () => {
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'updateToastError');
 				setLoading(false);
 			});
 	};
@@ -76,9 +76,9 @@ const TaskService = () => {
 				dispatch(setTaskList(_data));
 				setLoading(false);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'getTaskListError');
 				setLoading(false);
 			});
 	};
@@ -91,9 +91,9 @@ const TaskService = () => {
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'deleteTaskError');
 				setLoading(false);
 			});
 	};

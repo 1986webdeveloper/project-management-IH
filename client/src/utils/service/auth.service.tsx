@@ -43,9 +43,9 @@ const AuthServices = () => {
 				navigate(ROUTES.LOGIN);
 				successToastHelper(_data?.response?.message);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'signUpError');
 				setLoading(false);
 			});
 	};
@@ -62,9 +62,11 @@ const AuthServices = () => {
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				console.log(error);
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'loginError');
+
 				setLoading(false);
 			});
 	};
@@ -77,9 +79,9 @@ const AuthServices = () => {
 				navigate(ROUTES.LOGIN);
 				successToastHelper(_data?.response?.message);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'forgotPassError');
 				setLoading(false);
 			});
 	};

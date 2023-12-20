@@ -40,9 +40,9 @@ const UserService = () => {
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'createUserError');
 				setLoading(false);
 			});
 	};
@@ -62,9 +62,9 @@ const UserService = () => {
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'updateUserError');
 				setLoading(false);
 			});
 	};
@@ -77,9 +77,9 @@ const UserService = () => {
 				dispatch(setUserList(_data));
 				setLoading(false);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'getUserError');
 				setLoading(false);
 			});
 	};
@@ -93,9 +93,9 @@ const UserService = () => {
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'deleteUserError');
 				setLoading(false);
 			});
 	};

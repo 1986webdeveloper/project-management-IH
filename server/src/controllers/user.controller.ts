@@ -5,6 +5,7 @@ import { errorResponseHelper, successResponseHelper } from '../helpers/response.
 import { checkValidation } from '../helpers/validation.helper';
 import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
+import { SignUpValidation } from '../validations/auth.validation';
 import { UserValidation } from '../validations/user.validation';
 export default class UserController {
 	protected readonly CreateUser = async (req: Request, res: Response) => {

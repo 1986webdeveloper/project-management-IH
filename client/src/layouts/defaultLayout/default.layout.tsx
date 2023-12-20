@@ -1,7 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { Layout } from 'antd';
 import styles from './default.module.scss';
-
 import CustomFooter from '@/components/shared/footer';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,7 +9,6 @@ import ProjectProvider from '@/providers/project .provider';
 import ClientProvider from '@/providers/client.provider';
 import TaskProvider from '@/providers/task.provider';
 import { useEffect } from 'react';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import AuthServices from '@/utils/service/auth.service';

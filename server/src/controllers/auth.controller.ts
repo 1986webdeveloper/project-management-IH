@@ -4,7 +4,7 @@ import { UserService } from '../services/user.service';
 import { encryptionHelper } from '../helpers/encryption.helper';
 import { AuthService } from '../services/auth.service';
 import { UserInterface } from '../Interfaces/user.interface';
-import { UserValidation, LoginValidation } from '../validations/user.validation';
+import { SignUpValidation, LoginValidation } from '../validations/auth.validation';
 import { checkValidation } from '../helpers/validation.helper';
 import { decryptionHelper } from '../helpers/decryption.helper';
 import { tokenHelper } from '../helpers/token.helper';
@@ -13,9 +13,9 @@ import { sendMailer } from '../helpers/mailer.helper';
 export default class AuthController {
 	protected readonly Signup = async (req: Request, res: Response) => {
 		try {
-			const payload: UserValidation = req.body;
+			const payload: SignUpValidation = req.body;
 			// Validation of body
-			const validObj = new UserValidation();
+			const validObj = new SignUpValidation();
 			Object.assign(validObj, payload);
 			const _errMessage = await checkValidation(validObj);
 			if (_errMessage) {
@@ -92,7 +92,7 @@ export default class AuthController {
 		} catch (error) {
 			return res
 				.status(500)
-				.json(errorResponseHelper({ message: 'Something went wrong.', status: 'Error', statusCode: 500, error }));
+				.json(errorResponseHelper({ message: 'Unregistered User.', status: 'Error', statusCode: 500, error }));
 		}
 	};
 

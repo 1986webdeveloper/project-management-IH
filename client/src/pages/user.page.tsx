@@ -54,8 +54,8 @@ const User = () => {
 						<EditOutlined className="hover:text-blue-500" onClick={() => onEdit(rowData)} />
 
 						<Popconfirm
-							title="Delete the task"
-							description="Are you sure to delete this task?"
+							title="Delete the User"
+							description="Are you sure to delete this user?"
 							onConfirm={() => {
 								onDelete(rowData);
 							}}
@@ -81,7 +81,7 @@ const User = () => {
 		setEdit(true);
 	};
 	const onDelete = (data: UserDTO) => {
-		if (!data._id) return errorToastHelper('Project ID not found!!');
+		if (!data._id) return errorToastHelper('User ID not found!!');
 		deleteUser({
 			userId: data?._id ?? '',
 			setLoading,
@@ -143,7 +143,7 @@ const User = () => {
 			</AntCard>
 			<Modal
 				open={open}
-				title={<span className="mb-10 text-blue-950">{isEdit ? 'Edit Task' : 'Create Task'}</span>}
+				title={<span className="mb-10 text-blue-950">{isEdit ? 'Edit User' : 'Create User'}</span>}
 				onOk={onSubmit}
 				width={800}
 				onCancel={handleCancel}
@@ -151,7 +151,7 @@ const User = () => {
 				okText={isEdit ? 'Update' : 'Save'}
 				cancelButtonProps={{ danger: true, type: 'primary' }}
 			>
-				<div className="grid py-4 grid-rows-2 text-blue-950 grid-flow-col gap-16 items-start w-[100%]">
+				<div className="grid py-4 grid-rows-2 text-blue-950 grid-flow-col gap-12 items-start w-[100%]">
 					<AntInput
 						name={'name'}
 						value={userDetails.name}

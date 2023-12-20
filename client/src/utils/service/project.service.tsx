@@ -44,9 +44,9 @@ const ProjectService = () => {
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'CreateProjectError');
 				setLoading(false);
 			});
 	};
@@ -66,9 +66,9 @@ const ProjectService = () => {
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'updateProjectError');
 				setLoading(false);
 			});
 	};
@@ -81,8 +81,8 @@ const ProjectService = () => {
 				dispatch(setProjectList(_data));
 				setLoading(false);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
 				console.log(errorMessage);
 				errorToastHelper(errorMessage);
 				setLoading(false);
@@ -98,9 +98,9 @@ const ProjectService = () => {
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'DeleteProjectError');
 				setLoading(false);
 			});
 	};

@@ -23,15 +23,13 @@ const AntMultiSelect = ({ options, onChange, ...props }: MultiSelectProps) => {
 		const _filtered: any = [];
 		if (props.value)
 			for (const key in options) {
-				console.log(key);
 				if (options[key] !== props.value[key]) {
 					_filtered.push(options[key]);
 				}
 			}
-		console.log(_filtered);
 		return _filtered;
 	};
-	console.log(filteredList);
+	console.log(props);
 	return (
 		<div className={styles.inputWrapper}>
 			<span className={styles.label}>{props.label}</span>

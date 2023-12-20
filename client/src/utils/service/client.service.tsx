@@ -41,9 +41,9 @@ const ClientService = () => {
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'createClientError');
 				setLoading(false);
 			});
 	};
@@ -63,9 +63,9 @@ const ClientService = () => {
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'updateClientError');
 				setLoading(false);
 			});
 	};
@@ -78,9 +78,9 @@ const ClientService = () => {
 				dispatch(setClientList(_data));
 				setLoading(false);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'getClientError');
 				setLoading(false);
 			});
 	};
@@ -94,9 +94,9 @@ const ClientService = () => {
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})
-			.catch(error => {
-				const errorMessage = error?.response?.data?.error;
-				errorToastHelper(errorMessage);
+			.catch((error: any) => {
+				const errorMessage = error?.response?.data?.response?.message;
+				errorToastHelper(errorMessage, 'DeleteClientError');
 				setLoading(false);
 			});
 	};

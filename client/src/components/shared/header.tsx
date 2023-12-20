@@ -32,7 +32,7 @@ const CustomHeader = () => {
 				</div>
 				<div>
 					<Tabs
-						defaultActiveKey="1"
+						// defaultActiveKey="1"
 						centered
 						onChange={key => {
 							onTabChange(key);
@@ -51,7 +51,7 @@ const CustomHeader = () => {
 			<div>
 				<Popover content={AvatarPopTemplate}>
 					<Badge count={1}>
-						<Avatar shape="circle" icon={<UserOutlined />} />
+						<Avatar className="cursor-pointer" shape="circle" icon={<UserOutlined />} />
 					</Badge>
 					{}
 				</Popover>

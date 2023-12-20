@@ -17,6 +17,7 @@ import ClientService from '@/utils/service/client.service';
 import { errorToastHelper } from '@/utils/helper/toast.helper';
 import { initClient } from '@/constants/general.constants';
 import AntMultiSelect from '@/components/elements/multiSelect/multiSelect.element';
+import { USER_ROLES } from '@/constants/user.constant';
 
 const Client = () => {
 	const [open, setOpen] = useState(false);
@@ -142,6 +143,21 @@ const Client = () => {
 
 	const handleMultiSelect = (e: any, name: string) => {
 		console.log(e);
+		setClientDetails({ ...clientDetails, [name]: [...e] });
+	};
+
+	const managerList = () => {
+		const allUser = [...userList];
+		// const _requiredList = [];
+
+		const filtered = allUser.filter(x => {
+			if (x.role === USER_ROLES.MANAGER) {
+				const _obj = { label: x.name, value: x._id };
+				return _obj;
+			}
+		});
+		console.log(filtered);
+		return filtered;
 	};
 
 	return (
@@ -175,7 +191,7 @@ const Client = () => {
 				okText={isEdit ? 'Update' : 'Save'}
 				cancelButtonProps={{ danger: true, type: 'primary' }}
 			>
-				<div className="grid py-7 grid-rows-2 text-blue-950 grid-flow-col gap-16 items-start w-[100%]">
+				<div className="grid py-7 grid-rows-2 text-blue-950 grid-flow-col items-start w-[100%]">
 					<AntInput
 						name={'clientName'}
 						label="Client Name"
@@ -195,7 +211,9 @@ const Client = () => {
 						value={clientDetails.managerList}
 						label="Managers"
 						placeHolder="Select manager"
-						options={userList}
+						options={managerList().map(x => {
+							return { label: x.name, value: x._id };
+						})}
 						onChange={e => {
 							handleMultiSelect(e, 'technologyList');
 						}}

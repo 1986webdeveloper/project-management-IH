@@ -171,7 +171,7 @@ const Task = () => {
 				okText={isEdit ? 'Update' : 'Save'}
 				cancelButtonProps={{ danger: true, type: 'primary' }}
 			>
-				<div className="grid py-4 grid-rows-5 text-blue-950 grid-flow-col gap-16 items-start w-[100%]">
+				<div className="grid py-4 grid-rows-5 text-blue-950 grid-flow-col gap-14 items-start w-[100%]">
 					<AntInput
 						name={'title'}
 						label="Title"
