@@ -10,12 +10,14 @@ import UserService from "@/utils/service/user.service";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Button, Modal, Popconfirm, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, ReactNode, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { USER_ROLES } from "@/constants/user.constant";
 import { USER_ERROR } from "@/utils/error/messages";
 
-const User = () => {
+interface userProps {}
+
+const User = ({ ...props }: userProps) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isEdit, setEdit] = useState(false);
