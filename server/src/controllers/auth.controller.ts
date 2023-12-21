@@ -7,7 +7,7 @@ import { UserInterface } from '../Interfaces/user.interface';
 import { SignUpValidation, LoginValidation } from '../validations/auth.validation';
 import { checkValidation } from '../helpers/validation.helper';
 import { decryptionHelper } from '../helpers/decryption.helper';
-import { tokenHelper } from '../helpers/token.helper';
+import { decryptGeneratedToken, generateToken } from '../helpers/token.helper';
 import { sendMailer } from '../helpers/mailer.helper';
 
 export default class AuthController {
@@ -72,7 +72,7 @@ export default class AuthController {
 			const decryptedPassword = decryptionHelper(user.password);
 
 			if (user && payload.password === decryptedPassword) {
-				const accessToken = tokenHelper(user);
+				const accessToken = generateToken(user);
 				const _responseObj: any = { name: user.name, email: user.email, userId: user._id, accessToken };
 				return res.status(200).json(
 					successResponseHelper({
@@ -141,6 +141,42 @@ export default class AuthController {
 			return res
 				.status(500)
 				.json(errorResponseHelper({ message: 'Something went wrong.', status: 'Error', statusCode: 500, error }));
+		}
+	};
+
+	protected readonly CurrentUser = async (req: Request, res: Response) => {
+		try {
+			const token = req.headers.authorization;
+
+			const decrypted: any = decryptGeneratedToken(token.split(' ')[1]);
+
+			let user = await UserService.getUserByEmail(decrypted.email);
+
+			if (user) {
+				const userObj = {
+					_id: user._id,
+					name: user.name,
+					email: user.email,
+					designation: user.designation,
+					role: user.role,
+				};
+				return res.status(200).json(
+					successResponseHelper({
+						message: 'User fetched successfully',
+						status: 'Success',
+						statusCode: 200,
+						data: { userObj },
+					}),
+				);
+			} else {
+				return res
+					.status(400)
+					.json(errorResponseHelper({ message: 'No user found', status: 'Error', statusCode: 400 }));
+			}
+		} catch (error) {
+			return res
+				.status(500)
+				.json(errorResponseHelper({ message: 'Unauthorized User.', status: 'Error', statusCode: 500, error }));
 		}
 	};
 }

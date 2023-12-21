@@ -7,6 +7,7 @@ import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
 import { SignUpValidation } from '../validations/auth.validation';
 import { UserValidation } from '../validations/user.validation';
+import { decryptGeneratedToken } from '../helpers/token.helper';
 export default class UserController {
 	protected readonly CreateUser = async (req: Request, res: Response) => {
 		try {
@@ -89,14 +90,21 @@ export default class UserController {
 	protected readonly GetUser = async (req: Request, res: Response) => {
 		try {
 			const userId = req.params.id;
+			const token = req.headers.authorization;
+
+			console.log(req.headers);
 			if (!userId) {
-				const users: UserInterface[] = await UserService.getUserList();
+				const usersList: UserInterface[] = await UserService.getUserList();
+				const decrypted: any = decryptGeneratedToken(token.split(' ')[1]);
+				let user = await UserService.getUserByEmail(decrypted.email);
+				const filteredList = usersList.filter(x => x.email !== user.email);
+
 				return res.status(200).json(
 					successResponseHelper({
 						message: 'User list fetched Successfully',
 						status: 'Success',
 						statusCode: 200,
-						data: users,
+						data: filteredList,
 					}),
 				);
 			} else {
