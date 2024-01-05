@@ -3,12 +3,19 @@
 @tailwind utilities;
 
 body {
-  margin: 0;
-  /* display: flex; */
-  place-items: center;
-  min-width: 320px;
-  width: 100%;
-  min-height: 100vh;
-  background-color:white;
+	margin: 0;
+	/* display: flex; */
+	place-items: center;
+	min-width: 320px;
+	width: 100%;
+	min-height: 100vh;
+	background-color: white;
 }
 
+.ant-tabs-nav {
+	margin: 0 0 0 0 !important;
+}
+
+.ant-tabs-tab {
+	padding: 9px 0 !important;
+}

@@ -1,14 +1,15 @@
+import { ClientInterface } from '../Interfaces/client.interface';
 import ClientSchema from '../models/Client.schema';
 
 export const ClientService = new (class {
 	constructor() {}
 
-	createClient = async (clientData: any) => {
+	createClient = async (clientData: ClientInterface) => {
 		const Client = await ClientSchema.create({
 			clientName: clientData.clientName,
 			onBoardingDate: clientData.onBoardingDate,
 			industry: clientData.industry,
-			manager: clientData.manager,
+			managerList: clientData.managerList,
 		});
 
 		if (Client) {

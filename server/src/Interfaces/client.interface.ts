@@ -4,6 +4,6 @@ export interface ClientInterface {
 	clientName: string;
 	onBoardingDate: string;
 	industry: string;
-	manager: string;
+	managerList: string[];
 	_id?: Types.ObjectId;
 }

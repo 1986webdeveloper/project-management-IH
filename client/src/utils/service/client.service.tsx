@@ -10,33 +10,30 @@ import { errorToastHelper, successToastHelper } from '../helper/toast.helper';
 interface createClientProps {
 	payload: ClientDTO;
 	setOpen: (e: boolean) => void;
-	dispatch: Dispatch<UnknownAction>;
-	setLoading: (e: boolean) => void;
 }
 interface updateClientProps {
 	payload: ClientDTO;
 	setIsEdit: (e: boolean) => void;
 	setOpen: (e: boolean) => void;
-	dispatch: Dispatch<UnknownAction>;
-	setLoading: (e: boolean) => void;
 }
-interface getClientListProps {
-	dispatch: Dispatch<UnknownAction>;
-	setLoading: (e: boolean) => void;
-}
+
 interface DeleteClientProps {
 	clientId: string;
+}
+
+interface ClientServiceProps {
 	setLoading: (e: boolean) => void;
 	dispatch: Dispatch<UnknownAction>;
 }
 
-const ClientService = () => {
-	const CreateClient = ({ payload, setOpen, dispatch, setLoading }: createClientProps) => {
+const ClientService = ({ dispatch, setLoading }: ClientServiceProps) => {
+	const CreateClient = async ({ payload, setOpen }: createClientProps) => {
 		setLoading(true);
-		axios(RequestHelper('POST', API_LIST.CREATE_CLIENT, { payload }))
+
+		await axios(RequestHelper('POST', API_LIST.CREATE_CLIENT, { payload }))
 			.then((response: any) => {
 				const _data = response.data;
-				GetClient({ dispatch, setLoading });
+				GetClient();
 				setOpen(false);
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
@@ -48,16 +45,16 @@ const ClientService = () => {
 			});
 	};
 
-	const UpdateClient = ({ payload, setIsEdit, setOpen, dispatch, setLoading }: updateClientProps) => {
+	const UpdateClient = async ({ payload, setIsEdit, setOpen }: updateClientProps) => {
 		setLoading(true);
-		axios(
+		await axios(
 			RequestHelper('PUT', API_LIST.UPDATE_CLIENT + `${payload._id}`, {
 				payload: payload,
 			}),
 		)
-			.then((response: any) => {
+			.then(async (response: any) => {
 				const _data = response.data;
-				GetClient({ dispatch, setLoading });
+				await GetClient();
 				setOpen(false);
 				setIsEdit(false);
 				setLoading(false);
@@ -70,9 +67,9 @@ const ClientService = () => {
 			});
 	};
 
-	const GetClient = ({ dispatch, setLoading }: getClientListProps) => {
+	const GetClient = async () => {
 		setLoading(true);
-		axios(RequestHelper('GET', API_LIST.GET_CLIENT))
+		await axios(RequestHelper('GET', API_LIST.GET_CLIENT))
 			.then((response: any) => {
 				const _data: any = response.data.data;
 				dispatch(setClientList(_data));
@@ -85,12 +82,12 @@ const ClientService = () => {
 			});
 	};
 
-	const DeleteClient = ({ clientId, setLoading, dispatch }: DeleteClientProps) => {
+	const DeleteClient = async ({ clientId }: DeleteClientProps) => {
 		setLoading(true);
-		axios(RequestHelper('DELETE', API_LIST.DELETE_CLIENT + `${clientId}`))
+		await axios(RequestHelper('DELETE', API_LIST.DELETE_CLIENT + `${clientId}`))
 			.then((response: any) => {
 				const _data = response.data;
-				GetClient({ dispatch, setLoading });
+				GetClient();
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})

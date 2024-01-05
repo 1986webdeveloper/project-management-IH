@@ -4,7 +4,6 @@ import styles from './multiSelect.module.scss';
 
 interface MultiSelectProps {
 	options: any[];
-
 	optionLabel: string;
 	placeHolder?: string;
 	label?: string;
@@ -29,7 +28,7 @@ const AntMultiSelect = ({ options, onChange, ...props }: MultiSelectProps) => {
 			}
 		return _filtered;
 	};
-	console.log(props);
+
 	return (
 		<div className={styles.inputWrapper}>
 			<span className={styles.label}>{props.label}</span>

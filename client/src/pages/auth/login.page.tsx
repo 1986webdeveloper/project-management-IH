@@ -12,8 +12,8 @@ import { NavLink } from 'react-router-dom';
 export default function Login() {
 	const [userLogin, setUserLogin] = useState({} as UserLogInDTO);
 	const [loading, setLoading] = useState(false);
-	const { LoginServices } = AuthServices();
 	const dispatch = useDispatch();
+	const { LoginServices } = AuthServices({ dispatch, setLoading });
 
 	const [error, setError] = useState({
 		email: '',
@@ -33,15 +33,13 @@ export default function Login() {
 		if (isValid) {
 			LoginServices({
 				payload: userLogin,
-				dispatch: dispatch,
-				setLoading,
 			});
 		}
 	};
 
 	return (
 		<>
-			<div className="font-bold font-mono text-blue-950 tracking-widest text-3xl">LOGIN</div>
+			<div className="font-bold mb-6 font-mono text-blue-950 tracking-widest text-3xl">LOGIN</div>
 
 			<form onSubmit={onSubmit} className="flex flex-col gap-9  text-blue-950 items-center justify-center w-[100%]">
 				<AntInput

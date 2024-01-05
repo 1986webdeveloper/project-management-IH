@@ -7,7 +7,7 @@ export interface TaskInterface {
 	endDate: string;
 	reportedBy: string;
 	reportingManager: string;
-	assignee: string;
+
 	status: string;
 	priority: string;
 	projectName: Types.ObjectId;

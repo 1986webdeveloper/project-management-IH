@@ -9,11 +9,11 @@ type Props = {
 
 const ClientProvider = (props: Props) => {
 	const [loading, setLoading] = useState(false);
-	const { GetClient } = ClientService();
 	const dispatch = useDispatch();
+	const { GetClient } = ClientService({ dispatch, setLoading });
 
 	useEffect(() => {
-		GetClient({ dispatch, setLoading });
+		GetClient();
 	}, []);
 
 	return <Spin spinning={loading}>{props.children}</Spin>;

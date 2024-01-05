@@ -17,18 +17,30 @@ export const technologyConstant = [
 	{ value: 'reactJs', label: 'ReactJs' },
 ];
 
+export const PRIORITY_ENUM = {
+	HIGH: 'HIGH',
+	LOW: 'LOW',
+	MEDIUM: 'MEDIUM',
+};
+
+export const STATUS_ENUM = {
+	IN_PROGRESS: 'IN_PROGRESS',
+	COMPLETED: 'COMPLETED',
+	HOLD: 'HOLD',
+};
+
 export const initProject: ProjectDTO = {
 	projectName: '',
 	startDate: '',
 	estimatedHours: 0,
 	status: '',
 	deadlineDate: '',
-	assignedEmployee: '',
+	assignedEmployeeList: [],
 	technologyList: [],
 	priority: '',
-	clientId: '6571b5200b544c626e7d46a9',
-	profile: '',
+	clientId: '',
 	_id: '',
+	reportingManager: '',
 };
 
 export const initClient: ClientDTO = {
@@ -46,9 +58,8 @@ export const initTask: TaskDTO = {
 	endDate: '',
 	reportedBy: '',
 	reportingManager: '',
-	assignee: '',
 	status: '',
-	projectName: '657afe9d4879fe1e49cbeeda',
+	projectName: '',
 	priority: '',
 	_id: '',
 };

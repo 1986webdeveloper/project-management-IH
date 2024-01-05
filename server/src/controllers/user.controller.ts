@@ -5,9 +5,9 @@ import { errorResponseHelper, successResponseHelper } from '../helpers/response.
 import { checkValidation } from '../helpers/validation.helper';
 import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
-import { SignUpValidation } from '../validations/auth.validation';
 import { UserValidation } from '../validations/user.validation';
-import { decryptGeneratedToken } from '../helpers/token.helper';
+import { decryptAndVerifyToken } from '../helpers/token.helper';
+
 export default class UserController {
 	protected readonly CreateUser = async (req: Request, res: Response) => {
 		try {
@@ -56,6 +56,7 @@ export default class UserController {
 				.json(errorResponseHelper({ message: 'Something went wrong.', status: 'Error', statusCode: 500, error }));
 		}
 	};
+
 	protected readonly UpdateUser = async (req: Request, res: Response) => {
 		try {
 			const userId: string = req.params.id;
@@ -87,16 +88,15 @@ export default class UserController {
 				.json(errorResponseHelper({ message: 'Something went wrong.', status: 'Error', statusCode: 500, error }));
 		}
 	};
+
 	protected readonly GetUser = async (req: Request, res: Response) => {
 		try {
 			const userId = req.params.id;
 			const token = req.headers.authorization;
-
-			console.log(req.headers);
 			if (!userId) {
 				const usersList: UserInterface[] = await UserService.getUserList();
-				const decrypted: any = decryptGeneratedToken(token.split(' ')[1]);
-				let user = await UserService.getUserByEmail(decrypted.email);
+				const decrypted: any = decryptAndVerifyToken(token.split(' ')[1]);
+				const user = await UserService.getUserByEmail(decrypted.email);
 				const filteredList = usersList.filter(x => x.email !== user.email);
 
 				return res.status(200).json(
@@ -124,6 +124,7 @@ export default class UserController {
 				.json(errorResponseHelper({ message: 'Something went wrong.', status: 'Error', statusCode: 500, error }));
 		}
 	};
+
 	protected readonly DeleteUser = async (req: Request, res: Response) => {
 		try {
 			const userId: string = req.params.id;

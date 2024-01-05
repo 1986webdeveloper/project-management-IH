@@ -1,28 +1,35 @@
-import { Button, Modal, Popconfirm, Tag } from 'antd';
+import { Modal, Tag } from 'antd';
 import { ChangeEvent, useState } from 'react';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import AntCard from '@/components/elements/card/card.element';
 import AntTable from '@/components/elements/table/table.element';
 import { ColumnsType } from 'antd/es/table';
-import { TaskDTO } from '@/types/fieldTypes';
+import { ProjectDTO, TaskDTO } from '@/types/fieldTypes';
 import AntInput from '@/components/elements/Input/Input.element';
 import AntDatePicker from '@/components/elements/datePicker/datePicker.element';
 import AntSelect from '@/components/elements/select/select.element';
-import { Dayjs } from 'dayjs';
-import { initTask, StatusList, PriorityList } from '@/constants/general.constants';
+import { initTask, StatusList, PriorityList, PRIORITY_ENUM, STATUS_ENUM } from '@/constants/general.constants';
 import TaskService from '@/utils/service/task.service';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
+import { useDispatch } from 'react-redux';
 import { errorToastHelper } from '@/utils/helper/toast.helper';
+import { USER_ROLES } from '@/constants/user.constant';
+import useList from '@/utils/helper/array.helper';
+import DeleteButton from '@/components/elements/buttons/deleteButton.element';
+import EditButton from '@/components/elements/buttons/editButton.element';
+import CreateButton from '@/components/elements/buttons/createButton.element';
 
-const Task = () => {
+interface TaskProps {
+	taskList: TaskDTO[];
+	projectList: ProjectDTO[];
+}
+
+const Task = ({ taskList, projectList }: TaskProps) => {
 	const [open, setOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [taskDetails, setTaskDetails] = useState(initTask);
 	const [isEdit, setEdit] = useState(false);
-	const { CreateTask, UpdateTask, deleteTask } = TaskService();
-	const taskList = useSelector((state: RootState) => state.task.taskList);
 	const dispatch = useDispatch();
+	const { roleHelper, ModuleList } = useList();
+	const { CreateTask, UpdateTask, deleteTask } = TaskService({ dispatch, setLoading });
 
 	const columns: ColumnsType<TaskDTO> = [
 		{
@@ -34,22 +41,39 @@ const Task = () => {
 			title: <span className="text-blue-950">Reporting Manager</span>,
 			dataIndex: 'reportingManager',
 			key: 'reportingManager',
+			render: text => {
+				return <a>{roleHelper(USER_ROLES.MANAGER).keyLabelValuePair[text]?.label} </a>;
+			},
+		},
+		{
+			title: <span className="text-blue-950">Project Name</span>,
+			dataIndex: 'projectName',
+			key: 'projectName',
+			render: text => {
+				return <a>{ModuleList(projectList, 'projectName').keyLabelValuePair[text]?.label} </a>;
+			},
+		},
+		{
+			title: <span className="text-blue-950">Priority</span>,
+			key: 'priority',
+			dataIndex: 'priority',
+			render: (_, { priority }) => {
+				console.log(priority);
+				const color = priority === PRIORITY_ENUM.HIGH ? 'red' : priority === PRIORITY_ENUM.LOW ? 'skyblue' : 'orange';
+				return <Tag color={color}>{priority.toUpperCase()}</Tag>;
+			},
 		},
 		{
 			title: <span className="text-blue-950">Status</span>,
 			key: 'status',
 			dataIndex: 'status',
 			render: (_, { status }) => {
-				const color = status === 'HOLD' ? 'orange' : status === 'COMPLETED' ? 'green' : 'blue';
+				const color = status === STATUS_ENUM.HOLD ? 'grey' : status === STATUS_ENUM.COMPLETED ? 'green' : 'blue';
 
 				return <Tag color={color}>{status.toUpperCase()}</Tag>;
 			},
 		},
-		{
-			title: <span className="text-blue-950">Priority</span>,
-			dataIndex: 'priority',
-			key: 'priority',
-		},
+
 		{
 			title: <span className="text-blue-950">Action</span>,
 			dataIndex: 'action',
@@ -57,21 +81,8 @@ const Task = () => {
 			render: (_, rowData) => {
 				return (
 					<div className="flex gap-5">
-						<EditOutlined className="hover:text-blue-500" onClick={() => onEdit(rowData)} />
-
-						<Popconfirm
-							title="Delete the task"
-							description="Are you sure to delete this task?"
-							onConfirm={() => {
-								onDelete(rowData);
-							}}
-							okText="Yes"
-							cancelText="No"
-							okButtonProps={{ className: 'bg-blue-950', loading: loading }}
-							cancelButtonProps={{ danger: true, type: 'primary' }}
-						>
-							<DeleteOutlined className="hover:text-red-600" />
-						</Popconfirm>
+						<EditButton onClick={onEdit} rowData={rowData} />
+						<DeleteButton loading={loading} onDelete={onDelete} rowData={rowData} />
 					</div>
 				);
 			},
@@ -93,9 +104,6 @@ const Task = () => {
 		if (!data._id) return errorToastHelper('Task ID not found!!');
 		deleteTask({
 			taskId: data?._id ?? '',
-			setLoading,
-
-			dispatch,
 		});
 	};
 
@@ -104,8 +112,6 @@ const Task = () => {
 			CreateTask({
 				payload: taskDetails,
 				setOpen: setOpen,
-				dispatch,
-				setLoading,
 			});
 		}
 		if (isEdit) {
@@ -113,8 +119,6 @@ const Task = () => {
 				payload: taskDetails,
 				setIsEdit: setEdit,
 				setOpen: setOpen,
-				dispatch,
-				setLoading,
 			});
 		}
 	};
@@ -132,7 +136,7 @@ const Task = () => {
 		});
 	};
 
-	const handleDateSelect = (date: Dayjs | null, dateString: string, id: string) => {
+	const handleDateSelect = (date: any, dateString: string, id: string) => {
 		setTaskDetails({ ...taskDetails, [id]: dateString });
 	};
 
@@ -146,16 +150,7 @@ const Task = () => {
 				cardTitle={
 					<div className="flex w-full items-center justify-between p-4">
 						<span className="text-xl">Task Summary</span>
-						<Button
-							type="primary"
-							onClick={showModal}
-							icon={<PlusOutlined />}
-							shape="round"
-							size={'large'}
-							className="bg-blue-950"
-						>
-							Create
-						</Button>
+						<CreateButton onCreate={showModal} />
 					</div>
 				}
 			>
@@ -171,7 +166,7 @@ const Task = () => {
 				okText={isEdit ? 'Update' : 'Save'}
 				cancelButtonProps={{ danger: true, type: 'primary' }}
 			>
-				<div className="grid py-4 grid-rows-5 text-blue-950 grid-flow-col gap-14 items-start w-[100%]">
+				<div className="grid py-4 grid-rows-4 text-blue-950 grid-flow-col gap-14 items-start w-[100%]">
 					<AntInput
 						name={'title'}
 						label="Title"
@@ -179,14 +174,15 @@ const Task = () => {
 						value={taskDetails.title}
 						onChange={handleChange}
 					/>
-					<AntInput
-						name={'projectName'}
-						label="Project name"
-						placeHolder={'Enter Your Project Name'}
+					<AntSelect
+						id="projectName"
+						options={ModuleList(projectList, 'projectName').labelValuePair}
+						label={'Project name'}
+						placeHolder={'Please select project'}
+						onChange={e => handleSelect(e, 'projectName')}
 						value={taskDetails.projectName}
-						onChange={handleChange}
-						disabled
 					/>
+
 					<AntInput
 						name={'description'}
 						label="Description"
@@ -200,28 +196,31 @@ const Task = () => {
 							value={taskDetails?.startDate?.length > 0 ? taskDetails.startDate : ''}
 							label="Start Date"
 							onChange={(date, dateString) => handleDateSelect(date, dateString, 'startDate')}
-						></AntDatePicker>
+						/>
 						<AntDatePicker
 							name={'deadlineDate'}
 							value={taskDetails?.endDate?.length > 0 ? taskDetails.endDate : ''}
 							label="Deadline date"
 							onChange={(date, dateString) => handleDateSelect(date, dateString, 'endDate')}
-						></AntDatePicker>
+						/>
 					</div>
-					<AntInput
-						name={'reportedBy'}
-						label="Reported By"
-						placeHolder={'Enter rapporteur'}
-						value={taskDetails.reportedBy}
-						onChange={handleChange}
-					/>
-					<AntInput
-						name={'reportingManager'}
+					<AntSelect
+						id="reportingManager"
+						options={roleHelper(USER_ROLES.MANAGER).labelValuePair}
 						label="Reporting manager"
 						placeHolder={'Enter reporting manager'}
+						onChange={e => handleSelect(e, 'reportingManager')}
 						value={taskDetails.reportingManager}
-						onChange={handleChange}
 					/>
+					<AntSelect
+						id="reportedBy"
+						options={roleHelper(USER_ROLES.EMPLOYEE).labelValuePair}
+						label="Reported By"
+						placeHolder={'Enter rapporteur'}
+						onChange={e => handleSelect(e, 'reportedBy')}
+						value={taskDetails.reportedBy}
+					/>
+
 					<AntSelect
 						id="status"
 						options={StatusList}
@@ -229,14 +228,8 @@ const Task = () => {
 						placeHolder={'Select'}
 						onChange={e => handleSelect(e, 'status')}
 						value={taskDetails.status}
-					></AntSelect>
-					<AntInput
-						name={'assignee'}
-						label="Assignee"
-						placeHolder={'Enter your assignee name'}
-						value={taskDetails.assignee}
-						onChange={handleChange}
 					/>
+
 					<AntSelect
 						options={PriorityList}
 						label={'Priority'}
@@ -244,7 +237,7 @@ const Task = () => {
 						onChange={e => handleSelect(e, 'priority')}
 						value={taskDetails.priority}
 						id={'priority'}
-					></AntSelect>
+					/>
 				</div>
 			</Modal>
 		</div>

@@ -6,10 +6,10 @@ import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const ForgotPassword = () => {
+	const navigate = useNavigate();
 	const [email, setEmail] = useState('');
 	const [loading, setLoading] = useState(false);
-	const navigate = useNavigate();
-	const { ForgotPasswordService } = AuthServices();
+	const { ForgotPasswordService } = AuthServices({ setLoading });
 
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);
@@ -17,12 +17,12 @@ const ForgotPassword = () => {
 
 	const onSubmit = (e: any) => {
 		e.preventDefault();
-		ForgotPasswordService({ email, setLoading });
+		ForgotPasswordService({ email });
 	};
+
 	return (
 		<>
-			<div className="font-bold font-mono text-blue-950 tracking-widest text-2xl">FORGOT PASSWORD..?</div>
-
+			<div className="font-bold mb-6 font-mono text-blue-950 tracking-widest text-2xl">FORGOT PASSWORD..?</div>
 			<form onSubmit={onSubmit} className="flex flex-col gap-2  text-blue-950 items-center justify-center w-[100%]">
 				<AntInput
 					name="email"
@@ -48,7 +48,7 @@ const ForgotPassword = () => {
 					}}
 					className=" hover:bg-red-100 w-full"
 				>
-					Do it later
+					Do it later!!
 				</Button>
 			</form>
 		</>

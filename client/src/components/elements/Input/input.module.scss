@@ -1,54 +1,51 @@
 .inputWrapper {
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-  position: relative;
-  // width: 100%;
+	display: flex;
+	align-items: flex-start;
+	flex-direction: column;
+	position: relative;
+	// width: 100%;
 }
 
 .input {
-  width: 100%;
+	width: 100%;
 }
 .infoDiv {
-  position: absolute;
-  color: #172554;
-  transform: translate(530%, -110%);
+	position: absolute;
+	color: #172554;
+	transform: translate(530%, -110%);
 }
 
 .popContent {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 0.7rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.7rem;
 }
 
 .label {
-  font-size: 0.8rem;
-  font-weight: 900;
-  
-  margin-left: 0.5rem;
-  position: absolute;
-  transform: translate(2%, -90%);
+	font-size: 0.8rem;
+	font-weight: 900;
+	margin-left: 0.5rem;
+	position: absolute;
+	transform: translate(2%, -90%);
 }
 .error {
-  position: absolute;
-  transform: translate(1%, 170%);
-  font-size: 0.7rem;
-  font-weight: 600;
-  margin-left: 0.5rem;
-  color: red;
+	position: absolute;
+	transform: translate(1%, 170%);
+	font-size: 0.7rem;
+	font-weight: 600;
+	margin-left: 0.5rem;
+	color: red;
 }
 
 @media screen and (max-width: 480px) {
-  .input {
-    width: 250px !important;
-  }
-  .label {
-    font-size: 0.7rem;
-  }
-
-  .infoDiv {
-    transform: translate(470%, -80%);
-  }
+	.input {
+		width: 250px !important;
+	}
+	.label {
+		font-size: 0.7rem;
+	}
+	.infoDiv {
+		transform: translate(470%, -80%);
+	}
 }

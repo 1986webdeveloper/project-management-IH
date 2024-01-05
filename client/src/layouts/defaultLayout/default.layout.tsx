@@ -1,61 +1,70 @@
-import { Outlet } from "react-router-dom";
-import { Layout } from "antd";
-import styles from "./default.module.scss";
-import CustomFooter from "@/components/shared/footer";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import CustomHeader from "@/components/shared/header";
-import ProjectProvider from "@/providers/project .provider";
-import ClientProvider from "@/providers/client.provider";
-import TaskProvider from "@/providers/task.provider";
-import { ReactNode, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/store/store";
-import AuthServices from "@/utils/service/auth.service";
-import UserProvider from "@/providers/user.provider";
-import MainProvider from "@/providers/main.provider";
-import UserService from "@/utils/service/user.service";
+import { ReactNode, useEffect, useState } from 'react';
+import { Layout, Menu } from 'antd';
+import CustomHeader from '@/components/shared/header.shared';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { AntRoute, ROUTES, RouteType } from '@/constants/routes.constants';
+import { RootState } from '@/store/store';
+import { useSelector } from 'react-redux';
+import styles from './default.module.scss';
+import * as Icon from 'react-icons/fa';
 
-const { Content } = Layout;
+const { Sider, Content } = Layout;
 
 interface DefaultLayoutProps {
-  children: ReactNode;
+	children: ReactNode;
 }
 
-const DefaultLayout: React.FC<DefaultLayoutProps> = (props) => {
-  const { auth, user } = useSelector((state: RootState) => state);
-  const [loading, setLoading] = useState(false);
-  const [hasFetchedUserList, setHasFetchedUserList] = useState(false);
+const DefaultLayout = ({ children }: DefaultLayoutProps) => {
+	const [collapsed, setCollapsed] = useState(false);
+	const navigate = useNavigate();
+	const currentUser = useSelector((state: RootState) => state.auth.loggedUser);
+	const [heading, setHeading] = useState('');
+	const pathName = window.location.href;
+	const filteredRoutes = AntRoute.filter((route: any) => {
+		return route?.permission?.includes(currentUser?.role);
+	});
 
-  const dispatch = useDispatch();
-  const { LogoutService } = AuthServices();
+	useEffect(() => {
+		if (!heading && pathName !== ROUTES.HOME) {
+			setHeading('Dashboard');
+			navigate(ROUTES.HOME);
+		}
+	}, [heading, pathName]);
 
-  useEffect(() => {
-    if (!auth?.isLoggedIn) {
-      LogoutService({ dispatch });
-    } else {
-      // Check if the user list is empty or if it has been fetched before
-      if (!user.userList.length && !hasFetchedUserList) {
-        const { getUserList } = UserService();
-        getUserList({ dispatch, setLoading });
-        setHasFetchedUserList(true); // Update the state once the user list is fetched
-      }
-    }
-  }, [
-    auth?.isLoggedIn,
-    user.userList.length,
-    hasFetchedUserList,
-    dispatch,
-    setLoading,
-  ]);
-  return (
-    <Layout className={styles.spaceStyle}>
-      <CustomHeader />
-      <ToastContainer />
-      <Content className={styles.contentStyle}>{props.children}</Content>
-      <CustomFooter />
-    </Layout>
-  );
+	return (
+		<Layout>
+			<Sider trigger={null} collapsible collapsed={collapsed}>
+				<div className="flex items-center justify-center rounded-lg p-2 m-4 bg-slate-300">Logo</div>
+				<Menu
+					theme="dark"
+					mode="inline"
+					defaultSelectedKeys={['1']}
+					onClick={({ key }) => {
+						const index = Number(key) - 1;
+						const menuItem = filteredRoutes[index];
+						navigate(menuItem?.route);
+						setHeading(menuItem.heading ?? 'Dashboard');
+					}}
+					items={filteredRoutes.map((item: RouteType, i: number) => {
+						const id = String(i + 1);
+						const ReactIcon = Icon[item?.icon];
+						return {
+							label: item.label,
+							key: id,
+							icon: <ReactIcon />,
+						};
+					})}
+				/>
+			</Sider>
+			<Layout>
+				<CustomHeader collapsed={collapsed} setCollapsed={setCollapsed} Heading={heading} />
+				<Content className={styles.contentStyle}>
+					<Outlet />
+					{children}
+				</Content>
+			</Layout>
+		</Layout>
+	);
 };
 
 export default DefaultLayout;

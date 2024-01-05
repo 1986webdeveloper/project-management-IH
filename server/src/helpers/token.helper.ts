@@ -9,15 +9,25 @@ export const generateToken = (user: any) => {
 	};
 
 	const options = {
-		expiresIn: '1h',
+		expiresIn: '24h',
 	};
 
 	return jwt.sign(payload, JWT_SECRET, options);
 };
 
-export const decryptGeneratedToken = (token: string) => {
-	const JWT_SECRET = process.env.JWT_SECRET;
-	const decodedPayload = jwt.verify(token, JWT_SECRET);
-	console.log(decodedPayload);
-	return decodedPayload;
+export const decryptAndVerifyToken = (token: string) => {
+	try {
+		const JWT_SECRET = process.env.JWT_SECRET;
+		const decodedPayload = jwt.verify(token, JWT_SECRET);
+		return decodedPayload;
+	} catch (error) {
+		// Handle different types of errors during decryption
+		if (error instanceof jwt.TokenExpiredError) {
+			return 'Token expired';
+		} else if (error instanceof jwt.JsonWebTokenError) {
+			return 'Invalid token';
+		} else {
+			return 'Error decoding token';
+		}
+	}
 };

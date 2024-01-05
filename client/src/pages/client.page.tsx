@@ -1,15 +1,11 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Modal, Popconfirm, Tag } from 'antd';
+import { Button, Modal } from 'antd';
 import AntCard from '@/components/elements/card/card.element';
 import AntTable from '@/components/elements/table/table.element';
 import { ColumnsType } from 'antd/es/table';
-import { EditOutlined } from '@ant-design/icons';
-import { DeleteOutlined } from '@ant-design/icons';
-
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
+import { useDispatch } from 'react-redux';
 import { ClientDTO } from '@/types/fieldTypes';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import AntInput from '@/components/elements/Input/Input.element';
 import AntDatePicker from '@/components/elements/datePicker/datePicker.element';
 import { Dayjs } from 'dayjs';
@@ -18,22 +14,29 @@ import { errorToastHelper } from '@/utils/helper/toast.helper';
 import { initClient } from '@/constants/general.constants';
 import AntMultiSelect from '@/components/elements/multiSelect/multiSelect.element';
 import { USER_ROLES } from '@/constants/user.constant';
+import useList from '@/utils/helper/array.helper';
+import EditButton from '@/components/elements/buttons/editButton.element';
+import DeleteButton from '@/components/elements/buttons/deleteButton.element';
+import CreateButton from '@/components/elements/buttons/createButton.element';
 
-const Client = () => {
+interface ClientProps {
+	clientList: ClientDTO[];
+}
+
+const Client = ({ clientList }: ClientProps) => {
 	const [open, setOpen] = useState(false);
 	const [isEdit, setEdit] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [clientDetails, setClientDetails] = useState(initClient);
-	const clientList = useSelector((state: RootState) => state.client.clientList);
-	const userList = useSelector((state: RootState) => state.user.userList);
-	const { CreateClient, DeleteClient, UpdateClient } = ClientService();
-
 	const dispatch = useDispatch();
-
-	useEffect(() => {
-		console.log(userList);
-	}, []);
-
+	const { CreateClient, DeleteClient, UpdateClient } = ClientService({ dispatch, setLoading });
+	const { roleHelper } = useList();
+	const [error, setError] = useState({
+		clientName: '',
+		onBoardingDate: '',
+		industry: '',
+		managerList: '',
+	});
 	const columns: ColumnsType<ClientDTO> = [
 		{
 			title: <span className="text-blue-950">Client Name</span>,
@@ -53,8 +56,13 @@ const Client = () => {
 		},
 		{
 			title: <span className="text-blue-950">Manager</span>,
-			dataIndex: 'manager',
-			key: 'manager',
+			dataIndex: 'managerList',
+			key: 'managerList',
+			render: text => {
+				return text.map((x: any) => {
+					return <a>{roleHelper(USER_ROLES.MANAGER).keyLabelValuePair[x]?.label}, </a>;
+				});
+			},
 		},
 		{
 			title: <span className="text-blue-950">Action</span>,
@@ -63,21 +71,8 @@ const Client = () => {
 			render: (_, rowData) => {
 				return (
 					<div className="flex gap-5">
-						<EditOutlined className="hover:text-blue-500" onClick={() => onEdit(rowData)} />
-
-						<Popconfirm
-							title="Delete the client"
-							description="Are you sure to delete this client?"
-							onConfirm={() => {
-								onDelete(rowData);
-							}}
-							okText="Yes"
-							cancelText="No"
-							okButtonProps={{ className: 'bg-blue-950', loading: loading }}
-							cancelButtonProps={{ danger: true, type: 'primary' }}
-						>
-							<DeleteOutlined className="hover:text-red-600" />
-						</Popconfirm>
+						<EditButton onClick={onEdit} rowData={rowData} />
+						<DeleteButton loading={loading} onDelete={onDelete} rowData={rowData} />
 					</div>
 				);
 			},
@@ -116,8 +111,6 @@ const Client = () => {
 		if (!data._id) return errorToastHelper('Project ID not found!!');
 		DeleteClient({
 			clientId: data?._id ?? '',
-			setLoading,
-			dispatch,
 		});
 	};
 
@@ -126,8 +119,6 @@ const Client = () => {
 			CreateClient({
 				payload: clientDetails,
 				setOpen: setOpen,
-				dispatch,
-				setLoading,
 			});
 		}
 		if (isEdit) {
@@ -135,29 +126,12 @@ const Client = () => {
 				payload: clientDetails,
 				setIsEdit: setEdit,
 				setOpen: setOpen,
-				dispatch,
-				setLoading,
 			});
 		}
 	};
 
 	const handleMultiSelect = (e: any, name: string) => {
-		console.log(e);
 		setClientDetails({ ...clientDetails, [name]: [...e] });
-	};
-
-	const managerList = () => {
-		const allUser = [...userList];
-		// const _requiredList = [];
-
-		const filtered = allUser.filter(x => {
-			if (x.role === USER_ROLES.MANAGER) {
-				const _obj = { label: x.name, value: x._id };
-				return _obj;
-			}
-		});
-		console.log(filtered);
-		return filtered;
 	};
 
 	return (
@@ -166,16 +140,7 @@ const Client = () => {
 				cardTitle={
 					<div className="flex w-full items-center justify-between p-4">
 						<span className="text-xl">Client Summary</span>
-						<Button
-							type="primary"
-							onClick={showModal}
-							icon={<PlusOutlined />}
-							shape="round"
-							size={'large'}
-							className="bg-blue-950"
-						>
-							Create
-						</Button>
+						<CreateButton onCreate={showModal} />
 					</div>
 				}
 			>
@@ -198,6 +163,7 @@ const Client = () => {
 						placeHolder={'Enter Your Client Name'}
 						value={clientDetails.clientName}
 						onChange={handleChange}
+						error={error.clientName}
 					/>
 					<AntInput
 						name={'industry'}
@@ -205,26 +171,27 @@ const Client = () => {
 						placeHolder={'Enter Your expertise field'}
 						value={clientDetails.industry}
 						onChange={handleChange}
+						error={error.industry}
 					/>
 					<AntMultiSelect
 						width={330}
 						value={clientDetails.managerList}
 						label="Managers"
 						placeHolder="Select manager"
-						options={managerList().map(x => {
-							return { label: x.name, value: x._id };
-						})}
+						options={roleHelper(USER_ROLES.MANAGER).labelValuePair}
 						onChange={e => {
-							handleMultiSelect(e, 'technologyList');
+							handleMultiSelect(e, 'managerList');
 						}}
-						optionLabel={'name'}
+						optionLabel={'label'}
+						error={error.managerList}
 					/>
 					<AntDatePicker
 						name={'onBoardingDate'}
 						value={clientDetails?.onBoardingDate?.length > 0 ? clientDetails?.onBoardingDate : ''}
 						label="Onboarding Date"
 						onChange={(date, dateString) => handleDateSelect(date, dateString, 'onBoardingDate')}
-					></AntDatePicker>
+						error={error.onBoardingDate}
+					/>
 				</div>
 			</Modal>
 		</div>

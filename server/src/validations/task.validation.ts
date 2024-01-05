@@ -1,6 +1,6 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { Types } from 'mongoose';
-import { PriorityEnum, StatusEnum } from '../Interfaces/general.interface';
+import { PriorityEnum, StatusEnum } from '../Interfaces/general.enum';
 
 export class CreateTaskValidation {
 	@IsString()
@@ -26,10 +26,6 @@ export class CreateTaskValidation {
 	@IsString()
 	@IsNotEmpty()
 	reportingManager: string;
-
-	@IsString()
-	@IsNotEmpty()
-	assignee: string;
 
 	@IsString()
 	@IsNotEmpty()

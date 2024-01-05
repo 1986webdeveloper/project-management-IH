@@ -9,7 +9,7 @@ import {
 	ValidateNested,
 } from 'class-validator';
 import { Types } from 'mongoose';
-import { StatusEnum } from '../Interfaces/general.interface';
+import { StatusEnum } from '../Interfaces/general.enum';
 
 export class ProjectTechnology {
 	@IsString()
@@ -38,9 +38,9 @@ export class CreateProjectValidation {
 	@IsNotEmpty()
 	deadlineDate: string;
 
-	@IsString()
-	@IsNotEmpty()
-	assignedEmployee: string;
+	@IsArray()
+	@ValidateNested({ each: true })
+	assignedEmployeeList: [];
 
 	@IsArray()
 	@ValidateNested({ each: true })
@@ -50,11 +50,11 @@ export class CreateProjectValidation {
 	@IsNotEmpty()
 	priority: string;
 
+	@IsString()
+	@IsNotEmpty()
+	reportingManager: Types.ObjectId;
+
 	@IsMongoId()
 	@IsNotEmpty()
 	clientId: Types.ObjectId;
-
-	@IsString()
-	@IsNotEmpty()
-	profile: string;
 }

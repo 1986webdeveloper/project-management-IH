@@ -1,33 +1,31 @@
 // authSlice.ts
 
-import { USER_ROLES } from "@/constants/user.constant";
-import { getToken } from "@/utils/helper/localstorage.helper";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { UserDTO } from '@/types/auth.types';
+import { getToken } from '@/utils/helper/localstorage.helper';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface AuthState {
-  isLoggedIn: boolean;
-  role: String;
-  // Other authentication-related state can be stored here
+	isLoggedIn: boolean;
+	loggedUser: UserDTO;
+	// Other authentication-related state can be stored here
 }
 
 const initialState: AuthState = {
-  isLoggedIn: getToken() ? true : false,
-  role: USER_ROLES.ADMIN,
+	isLoggedIn: getToken() ? true : false,
+	loggedUser: {} as UserDTO,
 };
 
 const authSlice = createSlice({
-  name: "auth",
-  initialState,
-  reducers: {
-    setLoggedIn: (state: any, action: PayloadAction<boolean>) => {
-      state.isLoggedIn = action.payload;
-    },
-    setUserRole: (state: any, action: PayloadAction<string>) => {
-      state.role = action.payload;
-    },
-
-    // Other authentication-related actions can be defined here
-  },
+	name: 'auth',
+	initialState,
+	reducers: {
+		setLoggedIn: (state: any, action: PayloadAction<boolean>) => {
+			state.isLoggedIn = action.payload;
+		},
+		setLoggedUser: (state: any, action: PayloadAction<UserDTO>) => {
+			state.loggedUser = action.payload;
+		},
+	},
 });
 
 /**
@@ -36,5 +34,5 @@ const authSlice = createSlice({
  * @returns
  */
 
-export const { setLoggedIn, setUserRole } = authSlice.actions;
+export const { setLoggedIn, setLoggedUser } = authSlice.actions;
 export default authSlice.reducer;

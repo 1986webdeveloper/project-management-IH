@@ -9,7 +9,7 @@ export default class ClientController {
 	protected readonly CreateClient = async (req: Request, res: Response) => {
 		try {
 			const payload: CreateClientValidation = req.body;
-
+			console.log(payload);
 			const validObj = new CreateClientValidation();
 			Object.assign(validObj, payload);
 			const _errMessage = await checkValidation(validObj);
@@ -17,6 +17,7 @@ export default class ClientController {
 				return res.status(422).json(errorResponseHelper({ message: _errMessage, status: 'Error', statusCode: 422 }));
 			}
 			const client: ClientInterface | null = await ClientService.createClient(payload);
+
 			if (client) {
 				return res.status(201).json(
 					successResponseHelper({

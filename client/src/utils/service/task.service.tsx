@@ -10,33 +10,29 @@ import { setTaskList } from '@/store/slices/taskSlice';
 interface createTaskProps {
 	payload: TaskDTO;
 	setOpen: (e: boolean) => void;
-	dispatch: Dispatch<UnknownAction>;
-	setLoading: (e: boolean) => void;
 }
 interface updateTaskProps {
 	payload: TaskDTO;
 	setIsEdit: (e: boolean) => void;
 	setOpen: (e: boolean) => void;
-	dispatch: Dispatch<UnknownAction>;
-	setLoading: (e: boolean) => void;
 }
-interface getTaskListProps {
-	dispatch: Dispatch<UnknownAction>;
-	setLoading: (e: boolean) => void;
-}
+
 interface deleteTaskProps {
 	taskId: string;
+}
+
+interface TaskServiceProps {
 	setLoading: (e: boolean) => void;
 	dispatch: Dispatch<UnknownAction>;
 }
 
-const TaskService = () => {
-	const CreateTask = ({ dispatch, payload, setLoading, setOpen }: createTaskProps) => {
+const TaskService = ({ setLoading, dispatch }: TaskServiceProps) => {
+	const CreateTask = async ({ payload, setOpen }: createTaskProps) => {
 		setLoading(true);
-		axios(RequestHelper('POST', API_LIST.CREATE_TASK, { payload }))
+		await axios(RequestHelper('POST', API_LIST.CREATE_TASK, { payload }))
 			.then((response: any) => {
 				const _data = response.data;
-				getTaskList({ dispatch, setLoading });
+				getTaskList();
 				setOpen(false);
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
@@ -47,16 +43,16 @@ const TaskService = () => {
 				setLoading(false);
 			});
 	};
-	const UpdateTask = ({ dispatch, payload, setIsEdit, setLoading, setOpen }: updateTaskProps) => {
+	const UpdateTask = async ({ payload, setIsEdit, setOpen }: updateTaskProps) => {
 		setLoading(true);
-		axios(
+		await axios(
 			RequestHelper('PUT', API_LIST.UPDATE_TASK + `${payload._id}`, {
 				payload: payload,
 			}),
 		)
 			.then((response: any) => {
 				const _data = response.data;
-				getTaskList({ dispatch, setLoading });
+				getTaskList();
 				setOpen(false);
 				setIsEdit(false);
 				setLoading(false);
@@ -68,9 +64,9 @@ const TaskService = () => {
 				setLoading(false);
 			});
 	};
-	const getTaskList = ({ dispatch, setLoading }: getTaskListProps) => {
+	const getTaskList = async () => {
 		setLoading(true);
-		axios(RequestHelper('GET', API_LIST.GET_TASK))
+		await axios(RequestHelper('GET', API_LIST.GET_TASK))
 			.then((response: any) => {
 				const _data: any = response.data.data;
 				dispatch(setTaskList(_data));
@@ -82,12 +78,12 @@ const TaskService = () => {
 				setLoading(false);
 			});
 	};
-	const deleteTask = ({ taskId, dispatch, setLoading }: deleteTaskProps) => {
+	const deleteTask = async ({ taskId }: deleteTaskProps) => {
 		setLoading(true);
-		axios(RequestHelper('DELETE', API_LIST.DELETE_TASK + `${taskId}`))
+		await axios(RequestHelper('DELETE', API_LIST.DELETE_TASK + `${taskId}`))
 			.then((response: any) => {
 				const _data = response.data;
-				getTaskList({ dispatch, setLoading });
+				getTaskList();
 				setLoading(false);
 				successToastHelper(_data?.response?.message);
 			})

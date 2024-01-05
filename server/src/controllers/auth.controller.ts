@@ -7,7 +7,7 @@ import { UserInterface } from '../Interfaces/user.interface';
 import { SignUpValidation, LoginValidation } from '../validations/auth.validation';
 import { checkValidation } from '../helpers/validation.helper';
 import { decryptionHelper } from '../helpers/decryption.helper';
-import { decryptGeneratedToken, generateToken } from '../helpers/token.helper';
+import { decryptAndVerifyToken, generateToken } from '../helpers/token.helper';
 import { sendMailer } from '../helpers/mailer.helper';
 
 export default class AuthController {
@@ -21,13 +21,7 @@ export default class AuthController {
 			if (_errMessage) {
 				return res.status(422).json(errorResponseHelper({ message: _errMessage, status: 'Error', statusCode: 422 }));
 			}
-			//Checking for duplicate user
-			const userExists = await UserService.getUserByEmail(payload.email);
-			if (userExists) {
-				return res
-					.status(403)
-					.json(errorResponseHelper({ message: 'User already registered', status: 'Error', statusCode: 403 }));
-			}
+
 			// Password hashing
 			const hashedPassword = encryptionHelper(payload.password);
 			const user: UserInterface | null = await AuthService.registerUser({
@@ -73,7 +67,14 @@ export default class AuthController {
 
 			if (user && payload.password === decryptedPassword) {
 				const accessToken = generateToken(user);
-				const _responseObj: any = { name: user.name, email: user.email, userId: user._id, accessToken };
+				const _responseObj: any = {
+					name: user.name,
+					email: user.email,
+					designation: user.designation,
+					role: user.role,
+					_id: user._id,
+					accessToken,
+				};
 				return res.status(200).json(
 					successResponseHelper({
 						message: 'User logged in successfully',
@@ -148,7 +149,7 @@ export default class AuthController {
 		try {
 			const token = req.headers.authorization;
 
-			const decrypted: any = decryptGeneratedToken(token.split(' ')[1]);
+			const decrypted: any = decryptAndVerifyToken(token.split(' ')[1]);
 
 			let user = await UserService.getUserByEmail(decrypted.email);
 
@@ -165,7 +166,7 @@ export default class AuthController {
 						message: 'User fetched successfully',
 						status: 'Success',
 						statusCode: 200,
-						data: { userObj },
+						data: userObj,
 					}),
 				);
 			} else {

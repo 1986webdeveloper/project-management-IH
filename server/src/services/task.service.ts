@@ -19,7 +19,6 @@ export const TaskService = new (class {
 		});
 
 		if (Task) {
-			console.log(Task);
 			Task.save();
 			return Task;
 		}

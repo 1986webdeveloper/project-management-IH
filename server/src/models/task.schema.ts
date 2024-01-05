@@ -8,7 +8,6 @@ const Task: Schema = new Schema({
 	endDate: { type: String },
 	reportedBy: { type: String },
 	reportingManager: { type: String },
-	assignee: { type: String },
 	status: { type: String },
 	priority: { type: String },
 	projectName: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },

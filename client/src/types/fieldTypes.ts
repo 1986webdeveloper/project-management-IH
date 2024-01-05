@@ -16,11 +16,11 @@ export interface ProjectDTO {
 	estimatedHours: number;
 	status: string;
 	deadlineDate: string;
-	assignedEmployee: string;
+	assignedEmployeeList: string[];
+	reportingManager: string;
 	technologyList: string[];
 	priority: string;
 	clientId: string;
-	profile: string;
 	_id?: string;
 }
 
@@ -39,7 +39,6 @@ export interface TaskDTO {
 	endDate: string;
 	reportedBy: string;
 	reportingManager: string;
-	assignee: string;
 	status: string;
 	projectName: string;
 	priority: string;

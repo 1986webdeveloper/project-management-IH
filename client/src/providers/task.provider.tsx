@@ -9,11 +9,11 @@ type Props = {
 
 const TaskProvider = (props: Props) => {
 	const [loading, setLoading] = useState(false);
-	const { getTaskList } = TaskService();
 	const dispatch = useDispatch();
+	const { getTaskList } = TaskService({ dispatch, setLoading });
 
 	useEffect(() => {
-		getTaskList({ dispatch, setLoading });
+		getTaskList();
 	}, []);
 
 	return <Spin spinning={loading}>{props.children}</Spin>;

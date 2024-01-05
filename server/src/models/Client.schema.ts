@@ -6,7 +6,7 @@ const Client: Schema = new Schema(
 		clientName: { type: String },
 		onBoardingDate: { type: String },
 		industry: { type: String },
-		manager: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+		managerList: { type: [mongoose.Schema.Types.ObjectId], ref: 'User' },
 	},
 	{ versionKey: false },
 );
