@@ -16,6 +16,18 @@ export class UserValidation {
 
 	@IsNotEmpty()
 	@IsString()
+	date_of_birth!: string;
+
+	@IsNotEmpty()
+	@IsString()
+	department!: string;
+
+	@IsNotEmpty()
+	@IsString()
+	profile_Picture!: string;
+
+	@IsNotEmpty()
+	@IsString()
 	@IsEnum(RoleEnum)
 	@IsNotEmpty()
 	role!: string;

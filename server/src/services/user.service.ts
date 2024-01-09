@@ -9,6 +9,11 @@ export const UserService = new (class {
 		return _userList;
 	};
 
+	getUsersByRole = async (role: string) => {
+		const _user = await User.find({ role });
+		return _user;
+	};
+
 	getUserById = async (userId: string) => {
 		const _user = await User.findOne({ _id: userId });
 		return _user;

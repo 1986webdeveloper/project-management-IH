@@ -10,11 +10,11 @@ export const ProjectService = new (class {
 			estimatedHours: projectData.estimatedHours,
 			status: projectData.status,
 			deadlineDate: projectData.deadlineDate,
-			assignedEmployee: projectData.assignedEmployee,
+			assignedEmployeeList: projectData.assignedEmployeeList,
+			reportingManager: projectData.reportingManager,
 			technologyList: projectData.technologyList,
 			priority: projectData.priority,
 			clientId: projectData.clientId,
-			profile: projectData.profile,
 		});
 
 		if (Project) {
@@ -24,7 +24,15 @@ export const ProjectService = new (class {
 	};
 
 	getProjects = async () => {
-		const projectList = await ProjectSchema.find();
+		const projectList = await ProjectSchema.find().populate([
+			{
+				path: 'assignedEmployeeList',
+				select: '-password',
+			},
+			{
+				path: 'clientId',
+			},
+		]);
 		return projectList;
 	};
 

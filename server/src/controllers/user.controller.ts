@@ -11,14 +11,27 @@ import { decryptAndVerifyToken } from '../helpers/token.helper';
 export default class UserController {
 	protected readonly CreateUser = async (req: Request, res: Response) => {
 		try {
-			const payload: UserValidation = req.body;
+			console.log(req.file, '-----------------FILE');
+
+			const payload = req.body;
+
+			const newPayload: UserValidation = {
+				...payload,
+				profile_Picture: req.file.filename,
+			};
+			console.log(newPayload, 'nP');
+
 			// *Validation of body
 			const validObj = new UserValidation();
-			Object.assign(validObj, payload);
+
+			Object.assign(validObj, newPayload);
+
 			const _errMessage = await checkValidation(validObj);
+
 			if (_errMessage) {
 				return res.status(422).json(errorResponseHelper({ message: _errMessage, status: 'Error', statusCode: 422 }));
 			}
+
 			// *Checking for duplicate user
 			const userExists = await UserService.getUserByEmail(payload.email);
 			if (userExists) {
@@ -26,11 +39,12 @@ export default class UserController {
 					.status(403)
 					.json(errorResponseHelper({ message: 'User already registered', status: 'Error', statusCode: 403 }));
 			}
+
 			// *Password hashing
 			const hashedPassword = encryptionHelper(process.env.RESET_PASSWORD);
 
 			const user: UserInterface | null = await AuthService.registerUser({
-				...payload,
+				...newPayload,
 				password: hashedPassword,
 			} as UserInterface);
 
@@ -93,8 +107,15 @@ export default class UserController {
 		try {
 			const userId = req.params.id;
 			const token = req.headers.authorization;
+			const role = req.query.role;
+
 			if (!userId) {
-				const usersList: UserInterface[] = await UserService.getUserList();
+				let usersList: UserInterface[];
+				if (role) {
+					usersList = await UserService.getUsersByRole(role.toString());
+				} else {
+					usersList = await UserService.getUserList();
+				}
 				const decrypted: any = decryptAndVerifyToken(token.split(' ')[1]);
 				const user = await UserService.getUserByEmail(decrypted.email);
 				const filteredList = usersList.filter(x => x.email !== user.email);

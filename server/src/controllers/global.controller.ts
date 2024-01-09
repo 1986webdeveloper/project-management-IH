@@ -34,6 +34,7 @@ export default class GlobalController {
 					const data = {
 						users: filteredUserList,
 						projects: await ProjectService.getProjects(),
+						clients: await ClientService.getClients(),
 						tasks: await TaskService.getTasks(),
 					};
 					allData = data;
@@ -41,6 +42,7 @@ export default class GlobalController {
 				if (user.role === RoleEnum.EMPLOYEE) {
 					const data = {
 						users: filteredUserList,
+						projects: await ProjectService.getProjects(),
 						tasks: await TaskService.getTasks(),
 					};
 					allData = data;

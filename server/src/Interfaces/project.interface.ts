@@ -1,5 +1,7 @@
 import { Types } from 'mongoose';
 import { StatusEnum } from './general.enum';
+import { UserInterface } from './user.interface';
+import { ClientInterface } from './client.interface';
 
 export interface ProjectInterface {
 	projectName: string;
@@ -7,10 +9,10 @@ export interface ProjectInterface {
 	estimatedHours: number;
 	status: StatusEnum;
 	deadlineDate: string;
-	assignedEmployeeList: string[];
+	assignedEmployeeList: UserInterface[];
 	technologyList: string[];
-	reportingManager: Types.ObjectId;
+	reportingManager: UserInterface;
 	priority: string;
-	clientId: Types.ObjectId;
+	clientId: ClientInterface;
 	_id?: Types.ObjectId;
 }

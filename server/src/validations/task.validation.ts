@@ -1,6 +1,8 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { Types } from 'mongoose';
 import { PriorityEnum, StatusEnum } from '../Interfaces/general.enum';
+import { UserInterface } from '../Interfaces/user.interface';
+import { ProjectInterface } from '../Interfaces/project.interface';
 
 export class CreateTaskValidation {
 	@IsString()
@@ -19,13 +21,13 @@ export class CreateTaskValidation {
 	@IsNotEmpty()
 	endDate: string;
 
-	@IsString()
+	@IsArray()
 	@IsNotEmpty()
-	reportedBy: string;
+	reportedBy: UserInterface[];
 
 	@IsString()
 	@IsNotEmpty()
-	reportingManager: string;
+	reportingManager: UserInterface;
 
 	@IsString()
 	@IsNotEmpty()
@@ -41,5 +43,5 @@ export class CreateTaskValidation {
 
 	@IsString()
 	@IsNotEmpty()
-	projectName: Types.ObjectId;
+	projectId: ProjectInterface;
 }

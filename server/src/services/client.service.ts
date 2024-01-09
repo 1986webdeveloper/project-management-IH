@@ -20,7 +20,10 @@ export const ClientService = new (class {
 	};
 
 	getClients = async () => {
-		const ClientList = await ClientSchema.find();
+		const ClientList = await ClientSchema.find().populate({
+			path: 'managerList',
+			select: '-password',
+		});
 		return ClientList;
 	};
 

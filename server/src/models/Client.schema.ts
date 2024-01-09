@@ -8,7 +8,7 @@ const Client: Schema = new Schema(
 		industry: { type: String },
 		managerList: { type: [mongoose.Schema.Types.ObjectId], ref: 'User' },
 	},
-	{ versionKey: false },
+	{ timestamps: true, versionKey: false },
 );
 
 export default mongoose.model<ClientInterface>('Client', Client);

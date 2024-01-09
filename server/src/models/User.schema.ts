@@ -9,8 +9,11 @@ const User: Schema = new Schema(
 		password: { type: String },
 		designation: { type: String },
 		role: { type: String, enum: RoleEnum },
+		profile_Picture: { type: String },
+		date_of_birth: { type: String },
+		department: { type: String },
 	},
-	{ versionKey: false },
+	{ timestamps: true, versionKey: false },
 );
 
 export default mongoose.model<UserInterface>('User', User);

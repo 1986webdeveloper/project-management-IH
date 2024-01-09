@@ -10,6 +10,9 @@ export const AuthService = new (class {
 			name: userData.name,
 			designation: userData.designation,
 			role: userData.role,
+			department: userData.department,
+			date_of_birth: userData.date_of_birth,
+			profile_Picture: userData.profile_Picture,
 			_id: userData._id,
 		});
 

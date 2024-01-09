@@ -12,10 +12,9 @@ export const TaskService = new (class {
 			endDate: taskDetails.endDate,
 			reportedBy: taskDetails.reportedBy,
 			reportingManager: taskDetails.reportingManager,
-			assignee: taskDetails.assignee,
 			status: taskDetails.status,
 			priority: taskDetails.priority,
-			projectId: taskDetails.projectName,
+			projectId: taskDetails.projectId,
 		});
 
 		if (Task) {
@@ -25,7 +24,19 @@ export const TaskService = new (class {
 	};
 
 	getTasks = async () => {
-		const TaskList = await TaskSchema.find();
+		const TaskList = await TaskSchema.find().populate([
+			{
+				path: 'reportedBy',
+				select: '-password',
+			},
+			{
+				path: 'reportingManager',
+				select: '-password',
+			},
+			{
+				path: 'projectId',
+			},
+		]);
 		return TaskList;
 	};
 

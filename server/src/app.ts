@@ -37,6 +37,7 @@ export default class App {
 		this.instance.set('views', path.join(__dirname, 'views'));
 		this.instance.set('view engine', 'ejs');
 		this.instance.use(express.static(process.cwd() + '/public'));
+		this.instance.use('/uploads', express.static('uploads'));
 	}
 
 	private static initializeControllers() {
