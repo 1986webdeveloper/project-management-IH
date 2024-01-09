@@ -8,6 +8,8 @@ type AntSelectProps = {
   options: any[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onChange: (e: any) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onFocus?: (e: any) => void;
   placeHolder?: string;
   label?: string;
   width?: string;
@@ -16,6 +18,7 @@ type AntSelectProps = {
   className?: string;
   fieldLabel?: string;
   fieldValue?: string;
+  isLoading?: boolean;
 };
 
 const AntSelect = ({ ...props }: AntSelectProps) => {
@@ -33,6 +36,8 @@ const AntSelect = ({ ...props }: AntSelectProps) => {
         disabled={props.disabled ?? false}
         className={props.className ?? styles.input}
         fieldNames={{ label: props.fieldLabel, value: props.fieldValue }}
+        loading={props.isLoading}
+        onFocus={props.onFocus}
         // value={props.value}
         value={props.value}
       />
