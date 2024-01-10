@@ -18,6 +18,7 @@ import EditButton from "@/components/elements/buttons/editButton.element";
 import DeleteButton from "@/components/elements/buttons/deleteButton.element";
 import CreateButton from "@/components/elements/buttons/createButton.element";
 import UserService from "@/utils/service/user.service";
+import { clientInputValidation } from "@/utils/helper/validation.helper";
 import { UserDTO } from "@/types/auth.types";
 
 interface ClientProps {
@@ -31,12 +32,15 @@ const Client = ({ clientList, managerList }: ClientProps) => {
   const [loading, setLoading] = useState(false);
   const [clientDetails, setClientDetails] = useState(initClient);
   const dispatch = useDispatch();
-  const { getUserList } = UserService({ dispatch, setLoading });
-  const { CreateClient, DeleteClient, UpdateClient } = ClientService({
+  const { GetUserList } = UserService({
     dispatch,
     setLoading,
   });
-  const { roleHelper, ModuleList } = useList();
+  const { DeleteClient, CreateClient, UpdateClient } = ClientService({
+    dispatch,
+    setLoading,
+  });
+  const { ModuleList } = useList();
   const [error, setError] = useState({
     clientName: "",
     onBoardingDate: "",
@@ -96,9 +100,9 @@ const Client = ({ clientList, managerList }: ClientProps) => {
   // *handle change
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    setError({} as any);
     setClientDetails({ ...clientDetails, [name]: value });
   };
-
   const handleDateSelect = (
     date: Dayjs | null,
     dateString: string,
@@ -106,48 +110,47 @@ const Client = ({ clientList, managerList }: ClientProps) => {
   ) => {
     setClientDetails({ ...clientDetails, [id]: dateString });
   };
-
   // *modal actions
   const showModal = () => {
     setClientDetails(initClient);
     setOpen(true);
   };
-
   const handleCancel = () => {
     setOpen(false);
     setEdit(false);
   };
-
   // *FormActions
+  const onSubmit = (e: any) => {
+    e.preventDefault();
+    const isValid = clientInputValidation(clientDetails, setError);
+
+    if (isValid) {
+      if (!isEdit) {
+        CreateClient({
+          payload: clientDetails,
+          setOpen: setOpen,
+        });
+      }
+      if (isEdit) {
+        UpdateClient({
+          payload: clientDetails,
+          setIsEdit: setEdit,
+          setOpen: setOpen,
+        });
+      }
+    }
+  };
   const onEdit = (data: ClientDTO) => {
     console.log(data);
     setClientDetails(data);
     setOpen(true);
     setEdit(true);
   };
-
   const onDelete = (data: ClientDTO) => {
     if (!data._id) return errorToastHelper("Project ID not found!!");
     DeleteClient({
       clientId: data?._id ?? "",
     });
-  };
-
-  const onSubmit = () => {
-    console.log(clientDetails);
-    // if (!isEdit) {
-    //   CreateClient({
-    //     payload: clientDetails,
-    //     setOpen: setOpen,
-    //   });
-    // }
-    // if (isEdit) {
-    //   UpdateClient({
-    //     payload: clientDetails,
-    //     setIsEdit: setEdit,
-    //     setOpen: setOpen,
-    //   });
-    // }
   };
 
   const handleMultiSelect = (e: any, name: string) => {
@@ -210,7 +213,7 @@ const Client = ({ clientList, managerList }: ClientProps) => {
             onChange={(e) => {
               handleMultiSelect(e, "managerList");
             }}
-            onFocus={() => getUserList({ role: USER_ROLES.MANAGER })}
+            onFocus={() => GetUserList({ role: USER_ROLES.MANAGER })}
             optionLabel={"label"}
             error={error.managerList}
           />
@@ -225,6 +228,7 @@ const Client = ({ clientList, managerList }: ClientProps) => {
             onChange={(date, dateString) =>
               handleDateSelect(date, dateString, "onBoardingDate")
             }
+            transformStyle="translate(1%, 170%)"
             error={error.onBoardingDate}
           />
         </div>

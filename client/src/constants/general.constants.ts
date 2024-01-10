@@ -39,9 +39,9 @@ export const initProject: ProjectDTO = {
   assignedEmployeeList: [],
   technologyList: [],
   priority: "",
-  clientId: {} as ClientDTO,
+  clientId: "",
   _id: "",
-  reportingManager: {} as UserDTO,
+  reportingManager: "",
 };
 
 export const initClient: ClientDTO = {
@@ -63,4 +63,14 @@ export const initTask: TaskDTO = {
   projectId: {} as ProjectDTO,
   priority: "",
   _id: "",
+};
+
+export const initUser: UserDTO = {
+  name: "",
+  email: "",
+  designation: "",
+  role: "",
+  profile_Picture: "",
+  date_of_birth: "",
+  department: "",
 };

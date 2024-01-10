@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Select } from "antd";
 import styles from "./multiSelect.module.scss";
+import { useState } from "react";
 
 interface MultiSelectProps {
   options: any[];
@@ -22,6 +23,7 @@ interface MultiSelectProps {
 }
 
 const AntMultiSelect = ({ options, onChange, ...props }: MultiSelectProps) => {
+  const [searchText, setSearchText] = useState("");
   const filteredList = () => {
     const _filtered: any = [];
     if (props.value)
@@ -46,12 +48,16 @@ const AntMultiSelect = ({ options, onChange, ...props }: MultiSelectProps) => {
         style={{
           width: props.width ? props.width : "350px",
         }}
-        allowClear
-        filterOption={true}
         autoFocus
         popupClassName={styles.selectedPop}
         maxTagCount={4}
+        //*searching and fitering
         optionLabelProp="label"
+        searchValue={searchText}
+        onSearch={(e) => setSearchText(e)}
+        allowClear
+        filterOption={true}
+        //*searching and fitering
         options={filteredList()?.map((item: any) => ({
           value: item.value,
           label: item.label,

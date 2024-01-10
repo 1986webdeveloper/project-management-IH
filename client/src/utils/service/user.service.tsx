@@ -33,12 +33,12 @@ interface UserServiceProps {
   dispatch: Dispatch<UnknownAction>;
 }
 const UserService = ({ dispatch, setLoading }: UserServiceProps) => {
-  const createUser = async ({ payload, setOpen }: createUserProps) => {
+  const CreateUser = async ({ payload, setOpen }: createUserProps) => {
     setLoading(true);
     await axios(RequestHelper("POST", API_LIST.CREATE_USER, { payload }))
       .then((response: any) => {
         const _data = response.data;
-        getUserList({});
+        GetUserList({});
         setOpen(false);
         setLoading(false);
         successToastHelper(_data?.response?.message);
@@ -50,7 +50,7 @@ const UserService = ({ dispatch, setLoading }: UserServiceProps) => {
       });
   };
 
-  const updateUser = async ({
+  const UpdateUser = async ({
     payload,
     setIsEdit,
     setOpen,
@@ -63,7 +63,7 @@ const UserService = ({ dispatch, setLoading }: UserServiceProps) => {
     )
       .then((response: any) => {
         const _data = response.data;
-        getUserList({});
+        GetUserList({});
         setOpen(false);
         setIsEdit(false);
         setLoading(false);
@@ -76,7 +76,7 @@ const UserService = ({ dispatch, setLoading }: UserServiceProps) => {
       });
   };
 
-  const getUserList = async ({ role }: getUserListProps) => {
+  const GetUserList = async ({ role }: getUserListProps) => {
     const url = role ? `${API_LIST.GET_USER}?role=${role}` : API_LIST.GET_USER;
 
     setLoading(true);
@@ -101,12 +101,12 @@ const UserService = ({ dispatch, setLoading }: UserServiceProps) => {
       });
   };
 
-  const deleteUser = async ({ userId }: deleteUserProps) => {
+  const DeleteUser = async ({ userId }: deleteUserProps) => {
     setLoading(true);
     await axios(RequestHelper("DELETE", API_LIST.DELETE_USER + `${userId}`))
       .then((response: any) => {
         const _data = response.data;
-        getUserList({});
+        GetUserList({});
         setLoading(false);
         successToastHelper(_data?.response?.message);
       })
@@ -116,7 +116,7 @@ const UserService = ({ dispatch, setLoading }: UserServiceProps) => {
         setLoading(false);
       });
   };
-  return { createUser, updateUser, deleteUser, getUserList };
+  return { CreateUser, UpdateUser, DeleteUser, GetUserList };
 };
 
 export default UserService;

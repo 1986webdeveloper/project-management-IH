@@ -19,10 +19,10 @@ export interface ProjectDTO {
   status: string;
   deadlineDate: string;
   assignedEmployeeList: UserDTO[];
-  reportingManager: UserDTO;
+  reportingManager: any;
   technologyList: string[];
   priority: string;
-  clientId: ClientDTO;
+  clientId: any;
   _id?: string;
 }
 
@@ -40,9 +40,9 @@ export interface TaskDTO {
   startDate: string;
   endDate: string;
   reportedBy: UserDTO[];
-  reportingManager: UserDTO;
+  reportingManager: any;
   status: string;
-  projectId: ProjectDTO;
+  projectId: any;
   priority: string;
   _id: string;
 }

@@ -25,6 +25,7 @@ import CreateButton from "@/components/elements/buttons/createButton.element";
 import ProjectService from "@/utils/service/project.service";
 import UserService from "@/utils/service/user.service";
 import AntMultiSelect from "@/components/elements/multiSelect/multiSelect.element";
+import { taskInputValidation } from "@/utils/helper/validation.helper";
 import { UserDTO } from "@/types/auth.types";
 
 interface TaskProps {
@@ -44,15 +45,25 @@ const Task = ({
   const [loading, setLoading] = useState(false);
   const [taskDetails, setTaskDetails] = useState(initTask);
   const [isEdit, setEdit] = useState(false);
+  const [error, setError] = useState({
+    title: "",
+    projectId: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+    reportingManager: "",
+    reportedBy: "",
+    status: "",
+    priority: "",
+  });
   const dispatch = useDispatch();
   const { GetProject } = ProjectService({ dispatch, setLoading });
-  const { getUserList } = UserService({ dispatch, setLoading });
+  const { GetUserList } = UserService({ dispatch, setLoading });
   const { ModuleList } = useList();
   const { CreateTask, UpdateTask, deleteTask } = TaskService({
     dispatch,
     setLoading,
   });
-
   const columns: ColumnsType<TaskDTO> = [
     {
       title: <span className="text-blue-950">Title</span>,
@@ -128,63 +139,68 @@ const Task = ({
       },
     },
   ];
-
-  const showModal = () => {
-    setTaskDetails(initTask);
-    setOpen(true);
-  };
-
-  const onEdit = (data: TaskDTO) => {
-    setTaskDetails(data);
-    setOpen(true);
-    setEdit(true);
-  };
-
-  const onDelete = (data: TaskDTO) => {
-    if (!data._id) return errorToastHelper("Task ID not found!!");
-    deleteTask({
-      taskId: data?._id ?? "",
-    });
-  };
-
-  const onSubmit = () => {
-    if (!isEdit) {
-      CreateTask({
-        payload: taskDetails,
-        setOpen: setOpen,
-      });
-    }
-    if (isEdit) {
-      UpdateTask({
-        payload: taskDetails,
-        setIsEdit: setEdit,
-        setOpen: setOpen,
-      });
-    }
-  };
-
-  const handleCancel = () => {
-    setOpen(false);
-    setEdit(false);
-  };
-
+  // *handle change
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, name, type } = e.target;
+    setError({} as any);
     setTaskDetails({
       ...taskDetails,
       [name]: type === "number" ? Number(value) : value,
     });
   };
-
-  const handleDateSelect = (date: any, dateString: string, id: string) => {
-    setTaskDetails({ ...taskDetails, [id]: dateString });
-  };
-
   const handleSelect = (e: string, id: string) => {
+    setError({} as any);
     setTaskDetails({ ...taskDetails, [id]: e });
   };
   const handleMultiSelect = (e: any[], name: string) => {
+    setError({} as any);
     setTaskDetails({ ...taskDetails, [name]: [...e] });
+  };
+  const handleDateSelect = (date: any, dateString: string, id: string) => {
+    setTaskDetails({ ...taskDetails, [id]: dateString });
+  };
+  // *modal actions
+  const showModal = () => {
+    setTaskDetails(initTask);
+    setOpen(true);
+  };
+  const handleCancel = () => {
+    setError({} as any);
+    setTaskDetails(initTask);
+    setOpen(false);
+    setEdit(false);
+  };
+  // *FormActions
+  const onSubmit = (e: any) => {
+    e.preventDefault();
+    const isValid = taskInputValidation(taskDetails, setError, isEdit);
+    console.log(taskDetails);
+    if (isValid) {
+      if (!isEdit) {
+        CreateTask({
+          payload: taskDetails,
+          setOpen: setOpen,
+        });
+      }
+      if (isEdit) {
+        UpdateTask({
+          payload: taskDetails,
+          setIsEdit: setEdit,
+          setOpen: setOpen,
+        });
+      }
+    }
+  };
+  const onEdit = (data: TaskDTO) => {
+    setTaskDetails(data);
+    setOpen(true);
+    setEdit(true);
+  };
+  const onDelete = (data: TaskDTO) => {
+    if (!data._id) return errorToastHelper("Task ID not found!!");
+    deleteTask({
+      taskId: data?._id ?? "",
+    });
   };
 
   return (
@@ -220,6 +236,7 @@ const Task = ({
             placeHolder={"Enter Your task Name"}
             value={taskDetails.title}
             onChange={handleChange}
+            error={error.title}
           />
           <AntSelect
             id="projectId"
@@ -228,15 +245,18 @@ const Task = ({
             label={"Project name"}
             placeHolder={"Please select project"}
             onChange={(e) => handleSelect(e, "projectId")}
-            value={taskDetails.projectId.projectName}
+            value={
+              isEdit ? taskDetails.projectId.projectName : taskDetails.projectId
+            }
+            error={error.projectId}
           />
-
           <AntInput
             name={"description"}
             label="Description"
             placeHolder={"Enter Your Customer Name"}
             value={taskDetails.description}
             onChange={handleChange}
+            error={error.description}
           />
           <div className="flex gap-4">
             <AntDatePicker
@@ -248,9 +268,10 @@ const Task = ({
               onChange={(date, dateString) =>
                 handleDateSelect(date, dateString, "startDate")
               }
+              error={error.startDate}
             />
             <AntDatePicker
-              name={"deadlineDate"}
+              name={"endDate"}
               value={
                 taskDetails?.endDate?.length > 0 ? taskDetails.endDate : ""
               }
@@ -258,18 +279,23 @@ const Task = ({
               onChange={(date, dateString) =>
                 handleDateSelect(date, dateString, "endDate")
               }
+              error={error.endDate}
             />
           </div>
           <AntSelect
             id="reportingManager"
             options={ModuleList(managerList, "name")}
-            onFocus={() => getUserList({ role: USER_ROLES.MANAGER })}
+            onFocus={() => GetUserList({ role: USER_ROLES.MANAGER })}
             label="Reporting manager"
             placeHolder={"Enter reporting manager"}
             onChange={(e) => handleSelect(e, "reportingManager")}
-            value={taskDetails.reportingManager.name}
+            value={
+              isEdit
+                ? taskDetails.reportingManager.name
+                : taskDetails.reportingManager
+            }
+            error={error.reportingManager}
           />
-
           <AntMultiSelect
             width={330}
             value={
@@ -283,10 +309,10 @@ const Task = ({
             onChange={(e) => {
               handleMultiSelect(e, "reportedBy");
             }}
-            onFocus={() => getUserList({ role: USER_ROLES.EMPLOYEE })}
+            onFocus={() => GetUserList({ role: USER_ROLES.EMPLOYEE })}
             optionLabel={"label"}
+            error={error.reportedBy}
           />
-
           <AntSelect
             id="status"
             options={StatusList}
@@ -294,15 +320,16 @@ const Task = ({
             placeHolder={"Select"}
             onChange={(e) => handleSelect(e, "status")}
             value={taskDetails.status}
+            error={error.status}
           />
-
           <AntSelect
+            id="priority"
             options={PriorityList}
             label={"Priority"}
             placeHolder={"Select"}
             onChange={(e) => handleSelect(e, "priority")}
             value={taskDetails.priority}
-            id={"priority"}
+            error={error.priority}
           />
         </div>
       </Modal>

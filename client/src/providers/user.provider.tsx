@@ -10,10 +10,10 @@ type Props = {
 const UserProvider = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const { getUserList } = UserService({ dispatch, setLoading });
+  const { GetUserList } = UserService({ dispatch, setLoading });
 
   useEffect(() => {
-    getUserList({});
+    GetUserList({});
   }, []);
 
   return <Spin spinning={loading}>{props.children}</Spin>;

@@ -8,6 +8,7 @@ export const MODULES = {
   CLIENT: `${BASEURL}/client`,
   TASK: `${BASEURL}/task`,
   USER: `${BASEURL}/user`,
+  IMAGE: `${BASEURL}/image`,
   GLOBAL: `${BASEURL}/global`,
 };
 
@@ -33,4 +34,6 @@ export const API_LIST = {
   UPDATE_USER: `${MODULES.USER}/update/`,
   GET_USER: `${MODULES.USER}/get`,
   DELETE_USER: `${MODULES.USER}/delete/`,
+  IMAGE_UPLOAD: `${MODULES.IMAGE}/upload/`,
+  IMAGE_DELETE: `${MODULES.IMAGE}/delete/`,
 };

@@ -29,7 +29,7 @@ import EditButton from "@/components/elements/buttons/editButton.element";
 import CreateButton from "@/components/elements/buttons/createButton.element";
 import ClientService from "@/utils/service/client.service";
 import UserService from "@/utils/service/user.service";
-import { inputFieldValidation } from "@/utils/helper/validation.helper";
+import { projectInputValidation } from "@/utils/helper/validation.helper";
 import { UserDTO } from "@/types/auth.types";
 
 interface ProjectProps {
@@ -48,7 +48,6 @@ const Project = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [projectDetails, setProjectDetails] = useState(initProject);
-
   const [error, setError] = useState({
     projectName: "",
     estimatedHours: "",
@@ -63,13 +62,13 @@ const Project = ({
   });
   const dispatch = useDispatch();
   const { GetClient } = ClientService({ dispatch, setLoading });
-  const { getUserList } = UserService({ dispatch, setLoading });
+  const { GetUserList } = UserService({ dispatch, setLoading });
   const { CreateProject, UpdateProject, DeleteProject } = ProjectService({
     dispatch,
     setLoading,
   });
   const [isEdit, setEdit] = useState(false);
-  const { ModuleList, roleHelper } = useList();
+  const { ModuleList } = useList();
   const columns: ColumnsType<ProjectDTO> = [
     {
       title: <span className="text-blue-950">Project Name</span>,
@@ -150,23 +149,25 @@ const Project = ({
       },
     },
   ];
-
   // *handle change
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, name, type } = e.target;
+    const isValid = projectInputValidation(projectDetails, setError, isEdit);
+    // if (!isValid) ;
     setError({} as any);
-
     setProjectDetails({
       ...projectDetails,
       [name]: type === "number" ? Number(value) : value,
     });
   };
-
   const handleSelect = (e: string, id: string) => {
     setError({} as any);
     setProjectDetails({ ...projectDetails, [id]: e });
   };
-
+  const handleMultiSelect = (e: any, name: string) => {
+    setError({} as any);
+    setProjectDetails({ ...projectDetails, [name]: [...e] });
+  };
   const handleDateSelect = (
     date: Dayjs | null,
     dateString: string,
@@ -174,29 +175,21 @@ const Project = ({
   ) => {
     setProjectDetails({ ...projectDetails, [id]: dateString });
   };
-
   // *modal actions
   const handleCancel = () => {
+    setError({} as any);
     setProjectDetails(initProject);
     setOpen(false);
     setEdit(false);
   };
-
   const showModal = () => {
     setProjectDetails(initProject);
     setOpen(true);
   };
-
-  const handleMultiSelect = (e: any, name: string) => {
-    setError({} as any);
-    setProjectDetails({ ...projectDetails, [name]: [...e] });
-  };
-
   // *FormActions
   const onSubmit = (e: any) => {
     e.preventDefault();
-    const isValid = inputFieldValidation(projectDetails, setError);
-
+    const isValid = projectInputValidation(projectDetails, setError, isEdit);
     if (isValid) {
       if (!isEdit) {
         CreateProject({
@@ -213,14 +206,11 @@ const Project = ({
       }
     }
   };
-
   const onEdit = (data: ProjectDTO) => {
-    console.log(data);
     setProjectDetails(data);
     setOpen(true);
     setEdit(true);
   };
-
   const onDelete = (data: ProjectDTO) => {
     if (!data._id) return errorToastHelper("Project ID not found!!S");
     DeleteProject({ projectId: data?._id ?? "" });
@@ -261,7 +251,6 @@ const Project = ({
             onChange={handleChange}
             error={error.projectName}
           />
-
           <AntSelect
             id="clientId"
             options={ModuleList(clientList, "clientName")}
@@ -269,7 +258,11 @@ const Project = ({
             label={"Client"}
             placeHolder={"Client"}
             onChange={(e) => handleSelect(e, "clientId")}
-            value={projectDetails.clientId.clientName}
+            value={
+              isEdit
+                ? projectDetails.clientId.clientName
+                : projectDetails.clientId
+            }
             error={error.clientId}
           />
           <AntSelect
@@ -278,8 +271,13 @@ const Project = ({
             label={"Reporting manager"}
             placeHolder={"Select Manager"}
             onChange={(e) => handleSelect(e, "reportingManager")}
-            value={projectDetails.reportingManager.name}
-            onFocus={() => getUserList({ role: USER_ROLES.MANAGER })}
+            // value={projectDetails.reportingManager.name}
+            value={
+              isEdit
+                ? projectDetails.reportingManager.name
+                : projectDetails.reportingManager
+            }
+            onFocus={() => GetUserList({ role: USER_ROLES.MANAGER })}
             error={error.reportingManager}
           />
           <div className="flex gap-4">
@@ -310,7 +308,6 @@ const Project = ({
               error={error.deadlineDate}
             />
           </div>
-
           <AntMultiSelect
             width={330}
             value={
@@ -324,7 +321,7 @@ const Project = ({
             onChange={(e) => {
               handleMultiSelect(e, "assignedEmployeeList");
             }}
-            onFocus={() => getUserList({ role: USER_ROLES.EMPLOYEE })}
+            onFocus={() => GetUserList({ role: USER_ROLES.EMPLOYEE })}
             optionLabel={"label"}
             error={error.assignedEmployeeList}
           />
@@ -346,7 +343,6 @@ const Project = ({
             value={projectDetails.status}
             error={error.status}
           />
-
           <AntMultiSelect
             id="technologyList"
             width={330}
@@ -361,12 +357,12 @@ const Project = ({
             error={error.technologyList}
           />
           <AntSelect
+            id={"priority"}
             options={PriorityList}
             label={"Priority"}
             placeHolder={"Select"}
             onChange={(e) => handleSelect(e, "priority")}
             value={projectDetails.priority}
-            id={"priority"}
             error={error.priority}
           />
         </div>

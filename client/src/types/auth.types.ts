@@ -10,7 +10,7 @@ export interface UserDTO {
   designation: string;
   role: string;
   _id?: string;
-  profile_Picture: any;
+  profile_Picture: string;
   date_of_birth: string;
   department: string;
 

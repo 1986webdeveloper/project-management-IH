@@ -1,5 +1,6 @@
 import Select from "antd/es/select";
 import styles from "./select.module.scss";
+import { useState } from "react";
 
 type AntSelectProps = {
   id: string;
@@ -22,6 +23,8 @@ type AntSelectProps = {
 };
 
 const AntSelect = ({ ...props }: AntSelectProps) => {
+  const [searchText, setSearchText] = useState("");
+
   return (
     <div className={styles.inputWrapper}>
       <span className={styles.label}>{props.label}</span>
@@ -37,8 +40,16 @@ const AntSelect = ({ ...props }: AntSelectProps) => {
         className={props.className ?? styles.input}
         fieldNames={{ label: props.fieldLabel, value: props.fieldValue }}
         loading={props.isLoading}
+        //*searching and fitering
+        showSearch
+        optionLabelProp="label"
+        optionFilterProp="label"
+        searchValue={searchText}
+        onSearch={(e) => setSearchText(e)}
+        //*searching and fitering
+        allowClear
+        filterOption={true}
         onFocus={props.onFocus}
-        // value={props.value}
         value={props.value}
       />
       {props.error ? <span className={styles.error}>{props.error}</span> : ""}{" "}

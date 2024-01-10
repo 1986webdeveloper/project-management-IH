@@ -39,6 +39,7 @@ const App: React.FC = () => {
                 clientList={client.clientList}
                 managerList={user.managerList}
                 employeeList={user.employeeList}
+                key={"project"}
               />
             </ProjectProvider>
           ),
@@ -48,7 +49,7 @@ const App: React.FC = () => {
 
           element: (
             <UserProvider>
-              <User userList={user.userList} />,
+              <User userList={user.userList} key={"user"} />,
             </UserProvider>
           ),
         },
@@ -59,6 +60,7 @@ const App: React.FC = () => {
               <Client
                 clientList={client.clientList}
                 managerList={user.managerList}
+                key={"client"}
               />
             </ClientProvider>
           ),
@@ -72,6 +74,7 @@ const App: React.FC = () => {
                 projectList={project.projectList}
                 employeesList={user.employeeList}
                 managerList={user.managerList}
+                key={"task"}
               />
             </TaskProvider>
           ),
@@ -91,6 +94,7 @@ const App: React.FC = () => {
                 clientList={client.clientList}
                 managerList={user.managerList}
                 employeeList={user.employeeList}
+                key={"task"}
               />
             </ProjectProvider>
           ),
@@ -104,6 +108,7 @@ const App: React.FC = () => {
                 projectList={project.projectList}
                 employeesList={user.employeeList}
                 managerList={user.managerList}
+                key={"task"}
               />
             </TaskProvider>
           ),
@@ -123,6 +128,7 @@ const App: React.FC = () => {
                 projectList={project.projectList}
                 employeesList={user.employeeList}
                 managerList={user.managerList}
+                key={"task"}
               />
             </TaskProvider>
           ),
@@ -186,7 +192,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <AuthProvider>
+    <AuthProvider isLoggedIn={auth.isLoggedIn}>
       {renderAuthenticatedRoutes() || renderUnauthenticatedRoutes()}
     </AuthProvider>
   );
