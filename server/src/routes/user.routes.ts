@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import UserController from '../controllers/user.controller';
-import { upload } from '../helpers/imageUpload';
+import { upload } from '../middlewares/image.middleware';
 export default class User extends UserController {
 	public router = Router();
 
@@ -10,9 +10,10 @@ export default class User extends UserController {
 	}
 
 	private initializeRoutes() {
-		this.router.post('/create', upload.single('profile_Picture'), this.CreateUser);
 		this.router.get('/get', this.GetUser);
 		this.router.get('/get/:id', this.GetUser);
+		this.router.post('/create', this.CreateUser);
+		this.router.post('/checkEmail', this.CheckEmail);
 		this.router.put('/update/:id', this.UpdateUser);
 		this.router.delete('/delete/:id', this.DeleteUser);
 	}

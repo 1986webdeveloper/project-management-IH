@@ -7,7 +7,7 @@ import Project from './routes/project.routes';
 import Client from './routes/client.routes';
 import Task from './routes/task.routes';
 import User from './routes/user.routes';
-import Global from './routes/global.routes';
+import Image from './routes/image.routes';
 import { TokenMiddleware } from './middlewares/auth.middleware';
 
 export default class App {
@@ -54,9 +54,9 @@ export default class App {
 
 		// Other routes with token middleware
 		this.instance.use('/project', new Project().router);
-		this.instance.use('/global', new Global().router);
 		this.instance.use('/client', new Client().router);
 		this.instance.use('/task', new Task().router);
 		this.instance.use('/user', new User().router);
+		this.instance.use('/image', new Image().router);
 	}
 }

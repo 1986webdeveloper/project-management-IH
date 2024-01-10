@@ -11,20 +11,12 @@ import { decryptAndVerifyToken } from '../helpers/token.helper';
 export default class UserController {
 	protected readonly CreateUser = async (req: Request, res: Response) => {
 		try {
-			console.log(req.file, '-----------------FILE');
-
 			const payload = req.body;
-
-			const newPayload: UserValidation = {
-				...payload,
-				profile_Picture: req.file.filename,
-			};
-			console.log(newPayload, 'nP');
 
 			// *Validation of body
 			const validObj = new UserValidation();
 
-			Object.assign(validObj, newPayload);
+			Object.assign(validObj, payload);
 
 			const _errMessage = await checkValidation(validObj);
 
@@ -44,7 +36,7 @@ export default class UserController {
 			const hashedPassword = encryptionHelper(process.env.RESET_PASSWORD);
 
 			const user: UserInterface | null = await AuthService.registerUser({
-				...newPayload,
+				...payload,
 				password: hashedPassword,
 			} as UserInterface);
 
@@ -167,6 +159,35 @@ export default class UserController {
 				return res
 					.status(404)
 					.json(errorResponseHelper({ message: 'No User found to delete', status: 'Error', statusCode: 404 }));
+			}
+		} catch (error) {
+			return res
+				.status(500)
+				.json(errorResponseHelper({ message: 'Something went wrong.', status: 'Error', statusCode: 500, error }));
+		}
+	};
+
+	protected readonly CheckEmail = async (req: Request, res: Response) => {
+		try {
+			const userEmail: string = req.body.email;
+			if (!userEmail) {
+				return res
+					.status(400)
+					.json(errorResponseHelper({ message: 'No Email found', status: 'Error', statusCode: 400 }));
+			}
+			const userExists = await UserService.getUserByEmail(userEmail);
+			if (userExists) {
+				return res
+					.status(403)
+					.json(errorResponseHelper({ message: 'User email already in use.', status: 'Error', statusCode: 403 }));
+			} else {
+				return res.status(200).json(
+					successResponseHelper({
+						message: 'Email is available.',
+						status: 'Success',
+						statusCode: 200,
+					}),
+				);
 			}
 		} catch (error) {
 			return res

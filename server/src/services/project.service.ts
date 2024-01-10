@@ -32,6 +32,9 @@ export const ProjectService = new (class {
 			{
 				path: 'clientId',
 			},
+			{
+				path: 'reportingManager',
+			},
 		]);
 		return projectList;
 	};
