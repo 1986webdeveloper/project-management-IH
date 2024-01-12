@@ -13,6 +13,7 @@ export const AuthService = new (class {
 			department: userData.department,
 			date_of_birth: userData.date_of_birth,
 			profile_Picture: userData.profile_Picture,
+			UserStatus: userData.UserStatus,
 			_id: userData._id,
 		});
 

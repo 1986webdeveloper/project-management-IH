@@ -10,9 +10,15 @@ export enum PriorityEnum {
 	MEDIUM = 'MEDIUM',
 }
 
-export enum RoleEnum {
+export enum UserRoleEnum {
 	ADMIN = 'ADMIN',
 	HR = 'HR',
 	MANAGER = 'MANAGER',
 	EMPLOYEE = 'EMPLOYEE',
+}
+
+export enum UserStatus {
+	ACTIVE = 'ACTIVE',
+	INACTIVE = 'INACTIVE',
+	BLOCKED = 'BLOCKED',
 }
