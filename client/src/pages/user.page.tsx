@@ -9,7 +9,7 @@ import UserService from "@/utils/service/user.service";
 
 import { Modal } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { USER_ROLES } from "@/constants/user.constant";
 import { USER_ERROR } from "@/utils/error/messages";
@@ -17,7 +17,7 @@ import DeleteButton from "@/components/elements/buttons/deleteButton.element";
 import EditButton from "@/components/elements/buttons/editButton.element";
 import CreateButton from "@/components/elements/buttons/createButton.element";
 import AntDatePicker from "@/components/elements/datePicker/datePicker.element";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { ImageUpload } from "@/components/shared/imageUpload/imageUploader.shared";
 import { userInputValidation } from "@/utils/helper/validation.helper";
 import { initUser } from "@/constants/general.constants";
@@ -31,7 +31,8 @@ const User = ({ userList }: userProps) => {
   const [loading, setLoading] = useState(false);
   const [isEdit, setEdit] = useState(false);
   const [imgURL, setImgURL] = useState("");
-  const [userDetails, setUserDetails] = useState(initUser);
+  const [userDetails, setUserDetails] = useState({} as UserDTO);
+  const [fieldName, setFieldName] = useState("");
   const [error, setError] = useState({
     name: "",
     email: "",
@@ -66,7 +67,6 @@ const User = ({ userList }: userProps) => {
       key: "designation",
       dataIndex: "designation",
     },
-
     {
       title: <span className="text-blue-950">Action</span>,
       dataIndex: "action",
@@ -86,14 +86,20 @@ const User = ({ userList }: userProps) => {
     },
   ];
 
+  useEffect(() => {
+    const { errors } = userInputValidation(userDetails, setError);
+    setError({ ...error, [fieldName]: errors[fieldName] });
+  }, [userDetails, fieldName]);
+
   // *handle change
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
-    setError({} as any);
+    setFieldName(name);
     setUserDetails({ ...userDetails, [name]: value });
   };
+
   const handleSelect = (e: ChangeEvent<HTMLSelectElement>, id: string) => {
-    setError({} as any);
+    setFieldName(id);
     setUserDetails({ ...userDetails, [id]: e });
   };
   const handleDateSelect = (
@@ -101,6 +107,7 @@ const User = ({ userList }: userProps) => {
     dateString: string,
     id: string,
   ) => {
+    setFieldName(id);
     setUserDetails({ ...userDetails, [id]: dateString });
   };
   // *modal actions
@@ -109,14 +116,13 @@ const User = ({ userList }: userProps) => {
   };
   const handleCancel = () => {
     setError({} as any);
+    setFieldName("");
     setUserDetails(initUser);
     setOpen(false);
     setEdit(false);
   };
   // *FormActions
   const onEdit = (data: UserDTO) => {
-    console.log("9999");
-
     setUserDetails(data);
     setOpen(true);
     setEdit(true);
@@ -132,9 +138,7 @@ const User = ({ userList }: userProps) => {
   };
   const onSubmit = (e: any) => {
     e.preventDefault();
-    const isValid = userInputValidation(userDetails, setError);
-
-    if (isValid) {
+    if (!Object.values(error).some((value) => value)) {
       setUserDetails({ ...userDetails, profile_Picture: imgURL });
       if (!isEdit) {
         CreateUser({
@@ -143,8 +147,6 @@ const User = ({ userList }: userProps) => {
         });
       }
       if (isEdit) {
-        console.log("6666");
-
         UpdateUser({
           payload: userDetails,
           setIsEdit: setEdit,
@@ -153,6 +155,19 @@ const User = ({ userList }: userProps) => {
       }
     }
   };
+
+  // console.log(Object.values(error), "Error Obj length");
+  // console.log(
+  //   !Object.values(userDetails).some((value) => value),
+  //   "user Init obj length",
+  // );
+  // console.log(
+  //   Object.values(error).some((value) => value) ||
+  //     !Object.values(userDetails).some((value) => value),
+  //   "Final Result",
+  // );
+
+  console.log(dayjs().subtract(15, "years").startOf("day"), "Date");
 
   return (
     <div className="flex flex-col justify-center gap-4 p-4">
@@ -174,83 +189,99 @@ const User = ({ userList }: userProps) => {
           </span>
         }
         onOk={onSubmit}
-        width={800}
+        width={750}
         onCancel={handleCancel}
-        okButtonProps={{ className: "bg-blue-950", loading: loading }}
+        okButtonProps={{
+          className: "bg-blue-950",
+          loading: loading,
+          disabled:
+            Object.values(error).some((value) => value) ||
+            !Object.values(userDetails).some((value) => value),
+        }}
         okText={isEdit ? "Update" : "Save"}
         cancelButtonProps={{ danger: true, type: "primary" }}
       >
-        <div className="grid py-4 grid-rows-4 text-blue-950 grid-flow-col gap-4 items-start w-[100%]">
-          <AntInput
-            name={"name"}
-            value={userDetails.name}
-            label={"Name"}
-            placeHolder={"Enter Your Name"}
-            onChange={handleChange}
-            disabled={loading ? true : false}
-            error={error.name}
-          />
-          <AntInput
-            name={"email"}
-            value={userDetails.email}
-            label={"Email"}
-            placeHolder={"Enter Your Email"}
-            onChange={handleChange}
-            disabled={loading ? true : false}
-            error={error.email}
-          />
-          <AntInput
-            name={"designation"}
-            value={userDetails.designation}
-            label={"Designation"}
-            placeHolder={"Enter Your Designation"}
-            onChange={handleChange}
-            disabled={loading ? true : false}
-            error={error.designation}
-          />
-          <AntSelect
-            id={"department"}
-            options={DepartmentsList}
-            label={"Department"}
-            placeHolder={"Select"}
-            onChange={(e) => handleSelect(e, "department")}
-            disabled={loading ? true : false}
-            value={userDetails.department}
-            error={error.department}
-          ></AntSelect>
-          {/* <div> */}
-          <ImageUpload
-            className="flex w-full items-center justify-center"
-            setImgURL={setImgURL}
-            imgURL={imgURL}
-            // setError={}
-          />
-          {/* </div> */}
-          <AntDatePicker
-            name={"date_of_birth"}
-            value={
-              userDetails?.date_of_birth?.length > 0
-                ? userDetails.date_of_birth
-                : ""
-            }
-            label="Date of Birth"
-            onChange={(date, dateString) =>
-              handleDateSelect(date, dateString, "date_of_birth")
-            }
-            width="300px"
-            transformStyle="translate(1%, 176%)"
-            error={error.date_of_birth}
-          />
-          <AntSelect
-            id={"role"}
-            options={UserRole}
-            label={"Role"}
-            placeHolder={"Select"}
-            onChange={(e) => handleSelect(e, "role")}
-            disabled={loading ? true : false}
-            value={userDetails.role}
-            error={error.role}
-          ></AntSelect>
+        <div>
+          <div>
+            <ImageUpload
+              className="flex w-full items-center justify-center"
+              setImgURL={setImgURL}
+              imgURL={imgURL}
+            />
+          </div>
+          <div className="grid py-4 grid-rows-3 text-blue-950 grid-flow-col gap-7 items-start w-[100%]">
+            <AntInput
+              name={"name"}
+              value={userDetails.name}
+              label={"Name"}
+              placeHolder={"Enter Your Name"}
+              onChange={handleChange}
+              disabled={loading ? true : false}
+              error={error.name}
+              onFocus={() => setFieldName("name")}
+            />
+            <AntSelect
+              id={"role"}
+              options={UserRole}
+              label={"Role"}
+              placeHolder={"Select"}
+              onChange={(e) => handleSelect(e, "role")}
+              onFocus={() => setFieldName("role")}
+              disabled={loading ? true : false}
+              value={userDetails.role}
+              error={error.role}
+            />
+
+            <AntInput
+              name={"designation"}
+              value={userDetails.designation}
+              label={"Designation"}
+              placeHolder={"Enter Your Designation"}
+              onChange={handleChange}
+              disabled={loading ? true : false}
+              error={error.designation}
+              onFocus={() => setFieldName("designation")}
+            />
+            <AntInput
+              name={"email"}
+              value={userDetails.email}
+              label={"Email"}
+              placeHolder={"Enter Your Email"}
+              onChange={handleChange}
+              disabled={loading ? true : false}
+              error={error.email}
+              onFocus={() => setFieldName("email")}
+            />
+            <AntSelect
+              id={"department"}
+              options={DepartmentsList}
+              label={"Department"}
+              placeHolder={"Select"}
+              onChange={(e) => handleSelect(e, "department")}
+              disabled={loading ? true : false}
+              value={userDetails.department}
+              error={error.department}
+              onFocus={() => setFieldName("department")}
+            />
+            <AntDatePicker
+              name={"date_of_birth"}
+              value={
+                userDetails?.date_of_birth?.length > 0
+                  ? userDetails.date_of_birth
+                  : ""
+              }
+              label="Date of Birth"
+              onChange={(date, dateString) =>
+                handleDateSelect(date, dateString, "date_of_birth")
+              }
+              width="330px"
+              transformStyle="translate(1%, 176%)"
+              applyAgeValidation={true}
+              defaultValue={dayjs().subtract(15, "years").startOf("day")}
+              error={error.date_of_birth}
+              onFocus={() => setFieldName("date_of_birth")}
+            />
+          </div>
         </div>
       </Modal>
     </div>

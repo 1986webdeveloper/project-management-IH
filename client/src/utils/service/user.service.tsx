@@ -32,6 +32,10 @@ interface UserServiceProps {
   setLoading: (e: boolean) => void;
   dispatch: Dispatch<UnknownAction>;
 }
+
+interface checkUserEmailProps {
+  email: string;
+}
 const UserService = ({ dispatch, setLoading }: UserServiceProps) => {
   const CreateUser = async ({ payload, setOpen }: createUserProps) => {
     setLoading(true);
@@ -116,6 +120,29 @@ const UserService = ({ dispatch, setLoading }: UserServiceProps) => {
         setLoading(false);
       });
   };
+
+  const checkUserEmail = async ({ email }: checkUserEmailProps) => {
+    let returnMessage = "";
+
+    setLoading && setLoading(true);
+    await axios(
+      RequestHelper("POST", API_LIST.CHECK_USER_EMAIL, { payload: { email } }),
+    )
+      .then((response: any) => {
+        const _data = response.data.response.message;
+
+        setLoading && setLoading(false);
+        return (returnMessage = _data.toJson());
+      })
+      .catch((error: any) => {
+        const errorMessage = error?.response?.data?.response?.message;
+        // errorToastHelper(errorMessage, 'deleteUserError');
+        setLoading && setLoading(false);
+        returnMessage = errorMessage;
+        return (returnMessage = errorMessage);
+      });
+  };
+
   return { CreateUser, UpdateUser, DeleteUser, GetUserList };
 };
 

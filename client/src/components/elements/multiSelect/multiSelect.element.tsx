@@ -16,7 +16,6 @@ interface MultiSelectProps {
   fieldLabel?: string;
   fieldValue?: string;
   value?: any[];
-
   onChange: (e: any[]) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onFocus?: (e: any) => void;

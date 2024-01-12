@@ -1,5 +1,5 @@
 import { Modal, Tag } from "antd";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import AntCard from "@/components/elements/card/card.element";
 import AntTable from "@/components/elements/table/table.element";
 import { ColumnsType } from "antd/es/table";
@@ -45,6 +45,7 @@ const Task = ({
   const [loading, setLoading] = useState(false);
   const [taskDetails, setTaskDetails] = useState(initTask);
   const [isEdit, setEdit] = useState(false);
+  const [fieldName, setFieldName] = useState("");
   const [error, setError] = useState({
     title: "",
     projectId: "",
@@ -139,21 +140,26 @@ const Task = ({
       },
     },
   ];
+  useEffect(() => {
+    const { errors } = taskInputValidation(taskDetails, setError);
+    setError({ ...error, [fieldName]: errors[fieldName] });
+  }, [taskDetails, fieldName]);
+
   // *handle change
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, name, type } = e.target;
-    setError({} as any);
+    setFieldName(name);
     setTaskDetails({
       ...taskDetails,
       [name]: type === "number" ? Number(value) : value,
     });
   };
   const handleSelect = (e: string, id: string) => {
-    setError({} as any);
+    setFieldName(id);
     setTaskDetails({ ...taskDetails, [id]: e });
   };
   const handleMultiSelect = (e: any[], name: string) => {
-    setError({} as any);
+    setFieldName(name);
     setTaskDetails({ ...taskDetails, [name]: [...e] });
   };
   const handleDateSelect = (date: any, dateString: string, id: string) => {
@@ -166,6 +172,7 @@ const Task = ({
   };
   const handleCancel = () => {
     setError({} as any);
+    setFieldName("");
     setTaskDetails(initTask);
     setOpen(false);
     setEdit(false);
@@ -173,9 +180,8 @@ const Task = ({
   // *FormActions
   const onSubmit = (e: any) => {
     e.preventDefault();
-    const isValid = taskInputValidation(taskDetails, setError, isEdit);
-    console.log(taskDetails);
-    if (isValid) {
+    const { errors } = taskInputValidation(taskDetails, setError);
+    if (Object.values(errors).some((value) => value !== undefined)) {
       if (!isEdit) {
         CreateTask({
           payload: taskDetails,
@@ -236,12 +242,16 @@ const Task = ({
             placeHolder={"Enter Your task Name"}
             value={taskDetails.title}
             onChange={handleChange}
+            onFocus={() => setFieldName("title")}
             error={error.title}
           />
           <AntSelect
             id="projectId"
             options={ModuleList(projectList, "projectName")}
-            onFocus={() => GetProject()}
+            onFocus={() => {
+              setFieldName("projectId");
+              return GetProject();
+            }}
             label={"Project name"}
             placeHolder={"Please select project"}
             onChange={(e) => handleSelect(e, "projectId")}
@@ -256,6 +266,7 @@ const Task = ({
             placeHolder={"Enter Your Customer Name"}
             value={taskDetails.description}
             onChange={handleChange}
+            onFocus={() => setFieldName("description")}
             error={error.description}
           />
           <div className="flex gap-4">
@@ -268,6 +279,8 @@ const Task = ({
               onChange={(date, dateString) =>
                 handleDateSelect(date, dateString, "startDate")
               }
+              applyAgeValidation={false}
+              onFocus={() => setFieldName("startDate")}
               error={error.startDate}
             />
             <AntDatePicker
@@ -279,13 +292,18 @@ const Task = ({
               onChange={(date, dateString) =>
                 handleDateSelect(date, dateString, "endDate")
               }
+              applyAgeValidation={false}
+              onFocus={() => setFieldName("endDate")}
               error={error.endDate}
             />
           </div>
           <AntSelect
             id="reportingManager"
             options={ModuleList(managerList, "name")}
-            onFocus={() => GetUserList({ role: USER_ROLES.MANAGER })}
+            onFocus={() => {
+              setFieldName("reportingManager");
+              return GetUserList({ role: USER_ROLES.MANAGER });
+            }}
             label="Reporting manager"
             placeHolder={"Enter reporting manager"}
             onChange={(e) => handleSelect(e, "reportingManager")}
@@ -309,7 +327,10 @@ const Task = ({
             onChange={(e) => {
               handleMultiSelect(e, "reportedBy");
             }}
-            onFocus={() => GetUserList({ role: USER_ROLES.EMPLOYEE })}
+            onFocus={() => {
+              setFieldName("reportedBy");
+              return GetUserList({ role: USER_ROLES.EMPLOYEE });
+            }}
             optionLabel={"label"}
             error={error.reportedBy}
           />
@@ -320,6 +341,7 @@ const Task = ({
             placeHolder={"Select"}
             onChange={(e) => handleSelect(e, "status")}
             value={taskDetails.status}
+            onFocus={() => setFieldName("status")}
             error={error.status}
           />
           <AntSelect
@@ -329,6 +351,7 @@ const Task = ({
             placeHolder={"Select"}
             onChange={(e) => handleSelect(e, "priority")}
             value={taskDetails.priority}
+            onFocus={() => setFieldName("priority")}
             error={error.priority}
           />
         </div>

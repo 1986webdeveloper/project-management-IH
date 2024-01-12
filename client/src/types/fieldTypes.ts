@@ -28,6 +28,7 @@ export interface ProjectDTO {
 
 export interface ClientDTO {
   clientName: string;
+  email: string;
   onBoardingDate: string;
   industry: string;
   managerList: UserDTO[];

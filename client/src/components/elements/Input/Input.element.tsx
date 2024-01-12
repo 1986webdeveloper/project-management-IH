@@ -15,6 +15,7 @@ type InputProps = {
   error?: string;
   disabled?: boolean;
   isPassword?: boolean;
+  onFocus?: () => void;
 };
 
 const AntInput = ({ ...props }: InputProps) => {
@@ -34,6 +35,7 @@ const AntInput = ({ ...props }: InputProps) => {
         disabled={props.disabled ?? false}
         autoComplete={props.value}
         current-password={props.isPassword ? props.value : undefined}
+        onFocus={props.onFocus}
       />
       {props.isPassword ? (
         <div className={styles.infoDiv}>

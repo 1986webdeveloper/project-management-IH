@@ -2,9 +2,9 @@ import { Modal } from "antd";
 import AntCard from "@/components/elements/card/card.element";
 import AntTable from "@/components/elements/table/table.element";
 import { ColumnsType } from "antd/es/table";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { ClientDTO } from "@/types/fieldTypes";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import AntInput from "@/components/elements/Input/Input.element";
 import AntDatePicker from "@/components/elements/datePicker/datePicker.element";
 import { Dayjs } from "dayjs";
@@ -30,6 +30,7 @@ const Client = ({ clientList, managerList }: ClientProps) => {
   const [open, setOpen] = useState(false);
   const [isEdit, setEdit] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [fieldName, setFieldName] = useState("");
   const [clientDetails, setClientDetails] = useState(initClient);
   const dispatch = useDispatch();
   const { GetUserList } = UserService({
@@ -46,6 +47,7 @@ const Client = ({ clientList, managerList }: ClientProps) => {
     onBoardingDate: "",
     industry: "",
     managerList: "",
+    email: "",
   });
   const columns: ColumnsType<ClientDTO> = [
     {
@@ -96,11 +98,15 @@ const Client = ({ clientList, managerList }: ClientProps) => {
       },
     },
   ];
+  useEffect(() => {
+    const { errors } = clientInputValidation(clientDetails, setError);
+    setError({ ...error, [fieldName]: errors[fieldName] });
+  }, [clientDetails, fieldName]);
 
   // *handle change
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setError({} as any);
+    setFieldName(name);
     setClientDetails({ ...clientDetails, [name]: value });
   };
   const handleDateSelect = (
@@ -108,23 +114,32 @@ const Client = ({ clientList, managerList }: ClientProps) => {
     dateString: string,
     id: string,
   ) => {
+    setFieldName(id);
     setClientDetails({ ...clientDetails, [id]: dateString });
   };
+  const handleMultiSelect = (e: any, name: string) => {
+    setFieldName(name);
+    setClientDetails({ ...clientDetails, [name]: [...e] });
+  };
+
+  // const minDate = dayjs().subtract(15, "years").startOf("day");
+  // const maxDate = dayjs().add(1, "month").endOf("day");
   // *modal actions
   const showModal = () => {
     setClientDetails(initClient);
     setOpen(true);
   };
   const handleCancel = () => {
+    setFieldName("");
     setOpen(false);
     setEdit(false);
   };
   // *FormActions
   const onSubmit = (e: any) => {
     e.preventDefault();
-    const isValid = clientInputValidation(clientDetails, setError);
+    const { errors } = clientInputValidation(clientDetails, setError);
 
-    if (isValid) {
+    if (Object.values(errors).some((value) => value !== undefined)) {
       if (!isEdit) {
         CreateClient({
           payload: clientDetails,
@@ -153,10 +168,6 @@ const Client = ({ clientList, managerList }: ClientProps) => {
     });
   };
 
-  const handleMultiSelect = (e: any, name: string) => {
-    setClientDetails({ ...clientDetails, [name]: [...e] });
-  };
-
   return (
     <div className="flex flex-col justify-center gap-4 p-4">
       <AntCard
@@ -173,7 +184,7 @@ const Client = ({ clientList, managerList }: ClientProps) => {
         open={open}
         title={
           <span className="mb-10 text-blue-950">
-            {isEdit ? "Edit Project" : "Create Project"}
+            {isEdit ? "Edit Project" : "Create Client"}
           </span>
         }
         onOk={onSubmit}
@@ -183,13 +194,14 @@ const Client = ({ clientList, managerList }: ClientProps) => {
         okText={isEdit ? "Update" : "Save"}
         cancelButtonProps={{ danger: true, type: "primary" }}
       >
-        <div className="grid py-7 grid-rows-2 text-blue-950 grid-flow-col items-start w-[100%]">
+        <div className="grid py-7 grid-rows-3 text-blue-950 grid-flow-col items-start w-[100%]">
           <AntInput
             name={"clientName"}
             label="Client Name"
             placeHolder={"Enter Your Client Name"}
             value={clientDetails.clientName}
             onChange={handleChange}
+            onFocus={() => setFieldName("clientName")}
             error={error.clientName}
           />
           <AntInput
@@ -198,6 +210,7 @@ const Client = ({ clientList, managerList }: ClientProps) => {
             placeHolder={"Enter Your expertise field"}
             value={clientDetails.industry}
             onChange={handleChange}
+            onFocus={() => setFieldName("industry")}
             error={error.industry}
           />
           <AntMultiSelect
@@ -213,12 +226,26 @@ const Client = ({ clientList, managerList }: ClientProps) => {
             onChange={(e) => {
               handleMultiSelect(e, "managerList");
             }}
-            onFocus={() => GetUserList({ role: USER_ROLES.MANAGER })}
+            onFocus={() => {
+              setFieldName("managerList");
+              return GetUserList({ role: USER_ROLES.MANAGER });
+            }}
             optionLabel={"label"}
             error={error.managerList}
           />
+          <AntInput
+            name={"email"}
+            value={clientDetails.email}
+            label={"Email"}
+            placeHolder={"Enter Your Email"}
+            onChange={handleChange}
+            disabled={loading ? true : false}
+            onFocus={() => setFieldName("email")}
+            error={error.email}
+          />
           <AntDatePicker
             name={"onBoardingDate"}
+            width="330px"
             value={
               clientDetails?.onBoardingDate?.length > 0
                 ? clientDetails?.onBoardingDate
@@ -229,6 +256,10 @@ const Client = ({ clientList, managerList }: ClientProps) => {
               handleDateSelect(date, dateString, "onBoardingDate")
             }
             transformStyle="translate(1%, 170%)"
+            // minDate={minDate.format()}
+            // maxDate={maxDate.format()}
+            applyAgeValidation={false}
+            onFocus={() => setFieldName("onBoardingDate")}
             error={error.onBoardingDate}
           />
         </div>

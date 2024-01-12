@@ -3,7 +3,7 @@ import AntCard from "@/components/elements/card/card.element";
 import AntTable from "@/components/elements/table/table.element";
 import { Modal, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { ClientDTO, ProjectDTO } from "@/types/fieldTypes";
 import AntSelect from "@/components/elements/select/select.element";
 import AntDatePicker from "@/components/elements/datePicker/datePicker.element";
@@ -47,6 +47,7 @@ const Project = ({
 }: ProjectProps) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [fieldName, setFieldName] = useState("");
   const [projectDetails, setProjectDetails] = useState(initProject);
   const [error, setError] = useState({
     projectName: "",
@@ -149,23 +150,27 @@ const Project = ({
       },
     },
   ];
+  useEffect(() => {
+    const { errors } = projectInputValidation(projectDetails, setError);
+    setError({ ...error, [fieldName]: errors[fieldName] });
+  }, [projectDetails, fieldName]);
+
   // *handle change
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, name, type } = e.target;
-    const isValid = projectInputValidation(projectDetails, setError, isEdit);
-    // if (!isValid) ;
-    setError({} as any);
+
+    setFieldName(name);
     setProjectDetails({
       ...projectDetails,
       [name]: type === "number" ? Number(value) : value,
     });
   };
   const handleSelect = (e: string, id: string) => {
-    setError({} as any);
+    setFieldName(id);
     setProjectDetails({ ...projectDetails, [id]: e });
   };
   const handleMultiSelect = (e: any, name: string) => {
-    setError({} as any);
+    setFieldName(name);
     setProjectDetails({ ...projectDetails, [name]: [...e] });
   };
   const handleDateSelect = (
@@ -173,11 +178,13 @@ const Project = ({
     dateString: string,
     id: string,
   ) => {
+    setFieldName(id);
     setProjectDetails({ ...projectDetails, [id]: dateString });
   };
   // *modal actions
   const handleCancel = () => {
     setError({} as any);
+    setFieldName("");
     setProjectDetails(initProject);
     setOpen(false);
     setEdit(false);
@@ -189,8 +196,8 @@ const Project = ({
   // *FormActions
   const onSubmit = (e: any) => {
     e.preventDefault();
-    const isValid = projectInputValidation(projectDetails, setError, isEdit);
-    if (isValid) {
+    const { errors } = projectInputValidation(projectDetails, setError);
+    if (Object.values(errors).some((value) => value !== undefined)) {
       if (!isEdit) {
         CreateProject({
           payload: projectDetails,
@@ -249,12 +256,16 @@ const Project = ({
             placeHolder={"Enter Your Project Name"}
             value={projectDetails.projectName}
             onChange={handleChange}
+            onFocus={() => setFieldName("projectName")}
             error={error.projectName}
           />
           <AntSelect
             id="clientId"
             options={ModuleList(clientList, "clientName")}
-            onFocus={() => GetClient()}
+            onFocus={() => {
+              setFieldName("clientName");
+              return GetClient();
+            }}
             label={"Client"}
             placeHolder={"Client"}
             onChange={(e) => handleSelect(e, "clientId")}
@@ -277,7 +288,10 @@ const Project = ({
                 ? projectDetails.reportingManager.name
                 : projectDetails.reportingManager
             }
-            onFocus={() => GetUserList({ role: USER_ROLES.MANAGER })}
+            onFocus={() => {
+              setFieldName("reportingManager");
+              return GetUserList({ role: USER_ROLES.MANAGER });
+            }}
             error={error.reportingManager}
           />
           <div className="flex gap-4">
@@ -292,6 +306,7 @@ const Project = ({
               onChange={(date, dateString) =>
                 handleDateSelect(date, dateString, "startDate")
               }
+              onFocus={() => setFieldName("startDate")}
               error={error.startDate}
             />
             <AntDatePicker
@@ -305,6 +320,7 @@ const Project = ({
               onChange={(date, dateString) =>
                 handleDateSelect(date, dateString, "deadlineDate")
               }
+              onFocus={() => setFieldName("deadlineDate")}
               error={error.deadlineDate}
             />
           </div>
@@ -321,7 +337,10 @@ const Project = ({
             onChange={(e) => {
               handleMultiSelect(e, "assignedEmployeeList");
             }}
-            onFocus={() => GetUserList({ role: USER_ROLES.EMPLOYEE })}
+            onFocus={() => {
+              setFieldName("assignedEmployeeList");
+              return GetUserList({ role: USER_ROLES.EMPLOYEE });
+            }}
             optionLabel={"label"}
             error={error.assignedEmployeeList}
           />
@@ -332,6 +351,7 @@ const Project = ({
             value={projectDetails.estimatedHours?.toString()}
             onChange={handleChange}
             type="number"
+            onFocus={() => setFieldName("estimatedHours")}
             error={error.estimatedHours}
           />
           <AntSelect
@@ -341,6 +361,7 @@ const Project = ({
             placeHolder={"Select"}
             onChange={(e) => handleSelect(e, "status")}
             value={projectDetails.status}
+            onFocus={() => setFieldName("status")}
             error={error.status}
           />
           <AntMultiSelect
@@ -354,6 +375,7 @@ const Project = ({
               handleMultiSelect(e, "technologyList");
             }}
             optionLabel={"label"}
+            onFocus={() => setFieldName("technologyList")}
             error={error.technologyList}
           />
           <AntSelect
@@ -363,6 +385,7 @@ const Project = ({
             placeHolder={"Select"}
             onChange={(e) => handleSelect(e, "priority")}
             value={projectDetails.priority}
+            onFocus={() => setFieldName("priority")}
             error={error.priority}
           />
         </div>

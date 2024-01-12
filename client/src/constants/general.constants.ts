@@ -50,6 +50,7 @@ export const initClient: ClientDTO = {
   industry: "",
   managerList: [],
   _id: "",
+  email: "",
 };
 
 export const initTask: TaskDTO = {
