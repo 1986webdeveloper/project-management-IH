@@ -24,10 +24,6 @@ export class UserValidation {
 
 	@IsNotEmpty()
 	@IsString()
-	profile_Picture!: string;
-
-	@IsNotEmpty()
-	@IsString()
 	@IsEnum(UserRoleEnum)
 	@IsNotEmpty()
 	role!: string;

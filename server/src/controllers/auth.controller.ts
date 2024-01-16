@@ -180,4 +180,33 @@ export default class AuthController {
 				.json(errorResponseHelper({ message: 'Unauthorized User.', status: 'Error', statusCode: 500, error }));
 		}
 	};
+
+	protected readonly CheckEmail = async (req: Request, res: Response) => {
+		try {
+			const userEmail: string = req.body.email;
+			if (!userEmail) {
+				return res
+					.status(400)
+					.json(errorResponseHelper({ message: 'No Email found', status: 'Error', statusCode: 400 }));
+			}
+			const userExists = await UserService.getUserByEmail(userEmail);
+			if (userExists) {
+				return res
+					.status(403)
+					.json(errorResponseHelper({ message: 'User email already in use.', status: 'Error', statusCode: 403 }));
+			} else {
+				return res.status(200).json(
+					successResponseHelper({
+						message: 'Email is available.',
+						status: 'Success',
+						statusCode: 200,
+					}),
+				);
+			}
+		} catch (error) {
+			return res
+				.status(500)
+				.json(errorResponseHelper({ message: 'Something went wrong.', status: 'Error', statusCode: 500, error }));
+		}
+	};
 }

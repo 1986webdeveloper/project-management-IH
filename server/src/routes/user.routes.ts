@@ -13,7 +13,7 @@ export default class User extends UserController {
 		this.router.get('/get', this.GetUser);
 		this.router.get('/get/:id', this.GetUser);
 		this.router.post('/create', this.CreateUser);
-		this.router.post('/checkEmail', this.CheckEmail);
+
 		this.router.put('/update/:id', this.UpdateUser);
 		this.router.delete('/delete/:id', this.DeleteUser);
 	}

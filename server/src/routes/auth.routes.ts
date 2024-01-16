@@ -14,5 +14,6 @@ export default class Auth extends AuthController {
 		this.router.post('/login', this.Login);
 		this.router.post('/forgot-pass', this.ForgotPassword);
 		this.router.get('/currentUser', this.CurrentUser);
+		this.router.post('/checkEmail', this.CheckEmail);
 	}
 }

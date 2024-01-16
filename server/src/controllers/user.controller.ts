@@ -42,6 +42,9 @@ export default class UserController {
 
 			// *storing into database
 			if (user) {
+				if (!user.profile_Picture) {
+					user.profile_Picture = user.profile_Picture ? user.profile_Picture : 'uploads/007_default _avatar.png';
+				}
 				const resData = { email: user.email, name: user.name };
 				return res.status(201).json(
 					successResponseHelper({
@@ -159,35 +162,6 @@ export default class UserController {
 				return res
 					.status(404)
 					.json(errorResponseHelper({ message: 'No User found to delete', status: 'Error', statusCode: 404 }));
-			}
-		} catch (error) {
-			return res
-				.status(500)
-				.json(errorResponseHelper({ message: 'Something went wrong.', status: 'Error', statusCode: 500, error }));
-		}
-	};
-
-	protected readonly CheckEmail = async (req: Request, res: Response) => {
-		try {
-			const userEmail: string = req.body.email;
-			if (!userEmail) {
-				return res
-					.status(400)
-					.json(errorResponseHelper({ message: 'No Email found', status: 'Error', statusCode: 400 }));
-			}
-			const userExists = await UserService.getUserByEmail(userEmail);
-			if (userExists) {
-				return res
-					.status(403)
-					.json(errorResponseHelper({ message: 'User email already in use.', status: 'Error', statusCode: 403 }));
-			} else {
-				return res.status(200).json(
-					successResponseHelper({
-						message: 'Email is available.',
-						status: 'Success',
-						statusCode: 200,
-					}),
-				);
 			}
 		} catch (error) {
 			return res
