@@ -16,6 +16,9 @@ type InputProps = {
   disabled?: boolean;
   isPassword?: boolean;
   onFocus?: () => void;
+  loading?: boolean;
+  autoFocus?: boolean;
+  id?: string;
 };
 
 const AntInput = ({ ...props }: InputProps) => {
@@ -23,6 +26,7 @@ const AntInput = ({ ...props }: InputProps) => {
     <div className={styles.inputWrapper}>
       {props.label ? <span className={styles.label}>{props.label}</span> : ""}
       <Input
+        id={props.id}
         style={{ width: props.width ?? "330px" }}
         name={props.name}
         value={props.value}
@@ -36,6 +40,7 @@ const AntInput = ({ ...props }: InputProps) => {
         autoComplete={props.value}
         current-password={props.isPassword ? props.value : undefined}
         onFocus={props.onFocus}
+        autoFocus={props.autoFocus}
       />
       {props.isPassword ? (
         <div className={styles.infoDiv}>

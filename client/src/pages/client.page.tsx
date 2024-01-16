@@ -156,7 +156,7 @@ const Client = ({ clientList, managerList }: ClientProps) => {
     }
   };
   const onEdit = (data: ClientDTO) => {
-    console.log(data);
+    // console.log(data);
     setClientDetails(data);
     setOpen(true);
     setEdit(true);

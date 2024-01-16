@@ -32,7 +32,7 @@ export const API_LIST = {
   DELETE_TASK: `${MODULES.TASK}/delete/`,
   CREATE_USER: `${MODULES.USER}/create`,
   UPDATE_USER: `${MODULES.USER}/update/`,
-  CHECK_USER_EMAIL: `${MODULES.USER}/checkEmail/`,
+  CHECK_USER_EMAIL: `${MODULES.AUTH}/checkEmail/`,
   GET_USER: `${MODULES.USER}/get`,
   DELETE_USER: `${MODULES.USER}/delete/`,
   IMAGE_UPLOAD: `${MODULES.IMAGE}/upload/`,

@@ -78,7 +78,7 @@ const Task = ({
       render: (text) => {
         return (
           <a>
-            {text.name}
+            {text?.name}
             {/* {roleHelper(USER_ROLES.MANAGER).keyLabelValuePair[text]?.label}{" "} */}
           </a>
         );

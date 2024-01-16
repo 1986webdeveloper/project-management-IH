@@ -1,13 +1,12 @@
-import { Button } from "antd";
 import styles from "./imageUpload.module.scss";
-import { BiSolidImageAdd } from "react-icons/bi";
 import { RxUpdate } from "react-icons/rx";
 import { AiOutlineDelete } from "react-icons/ai";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import axios from "axios";
-import { API_LIST } from "@/config/api.config";
+import { API_LIST, BASEURL } from "@/config/api.config";
 import { getToken } from "@/utils/helper/localstorage.helper";
 import { useState } from "react";
+import { DEFAULT_PIC_URL } from "@/config/keys.config";
 
 interface imageUploadProps {
   setImgURL: (e: string) => void;
@@ -58,8 +57,7 @@ export function ImageUpload({ setError, setImgURL, imgURL }: imageUploadProps) {
       }
     }
   };
-
-  const deleteImage = async (imageUrl?: string) => {
+  const deleteImage = async () => {
     try {
       const response = await axios.post(
         API_LIST.IMAGE_DELETE,
@@ -93,49 +91,36 @@ export function ImageUpload({ setError, setImgURL, imgURL }: imageUploadProps) {
       maxNumber={1}
       acceptType={["jpg", "gif", "png"]}
     >
-      {({ imageList, onImageUpload, onImageUpdate, isDragging, dragProps }) => {
-        // write your building UI
-
+      {({ onImageUpdate }) => {
         return (
           <div className={styles.uploadWrapper}>
-            {imageList?.length <= 0 ? (
-              <Button
-                className={styles.imageSection}
-                style={isDragging ? { color: "red" } : undefined}
-                onClick={onImageUpload}
-                {...dragProps}
-              >
-                <BiSolidImageAdd size={30} />
-                Drop an Image here
-              </Button>
-            ) : (
-              imageList?.map((image, index) => {
-                return (
-                  <div key={`index-${index}`} className={styles.imageWrapper}>
-                    <img
-                      src={image.dataURL}
-                      className={styles.uploadedImage}
-                      alt="logo"
-                      width="100"
-                    />
-                    <div className={styles.buttonsWrapper}>
-                      <button
-                        onClick={() => onImageUpdate(index)}
-                        className={styles.button}
-                      >
-                        <RxUpdate size={22} />
-                      </button>
-                      <button
-                        onClick={() => deleteImage()}
-                        className={styles.button}
-                      >
-                        <AiOutlineDelete size={22} />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })
-            )}
+            {
+              <div className={styles.imageWrapper}>
+                <img
+                  src={imgURL ? `${BASEURL}/${imgURL}` : DEFAULT_PIC_URL}
+                  className={styles.uploadedImage}
+                  alt="logo"
+                  width="100"
+                />
+                <div className={styles.buttonsWrapper}>
+                  <button
+                    onClick={() => onImageUpdate(0)}
+                    className={styles.button}
+                  >
+                    <RxUpdate size={22} />
+                  </button>
+                  {imgURL && (
+                    <button
+                      onClick={() => deleteImage()}
+                      className={styles.button}
+                      disabled={!imgURL ? true : false}
+                    >
+                      <AiOutlineDelete size={22} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            }
           </div>
         );
       }}

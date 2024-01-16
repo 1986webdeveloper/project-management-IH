@@ -20,7 +20,9 @@ import AntDatePicker from "@/components/elements/datePicker/datePicker.element";
 import dayjs, { Dayjs } from "dayjs";
 import { ImageUpload } from "@/components/shared/imageUpload/imageUploader.shared";
 import { userInputValidation } from "@/utils/helper/validation.helper";
+import EmailInput from "@/components/elements/Input/email.input.elemet";
 import { initUser } from "@/constants/general.constants";
+import { DEFAULT_PIC_URL } from "@/config/keys.config";
 
 interface userProps {
   userList: UserDTO[];
@@ -31,8 +33,9 @@ const User = ({ userList }: userProps) => {
   const [loading, setLoading] = useState(false);
   const [isEdit, setEdit] = useState(false);
   const [imgURL, setImgURL] = useState("");
-  const [userDetails, setUserDetails] = useState({} as UserDTO);
+  const [userDetails, setUserDetails] = useState(initUser);
   const [fieldName, setFieldName] = useState("");
+
   const [error, setError] = useState({
     name: "",
     email: "",
@@ -91,13 +94,20 @@ const User = ({ userList }: userProps) => {
     setError({ ...error, [fieldName]: errors[fieldName] });
   }, [userDetails, fieldName]);
 
+  useEffect(() => {
+    setUserDetails({
+      ...userDetails,
+      profile_Picture: imgURL ? imgURL : DEFAULT_PIC_URL,
+    });
+  }, []);
+
   // *handle change
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
     setFieldName(name);
+    // loop  `
     setUserDetails({ ...userDetails, [name]: value });
   };
-
   const handleSelect = (e: ChangeEvent<HTMLSelectElement>, id: string) => {
     setFieldName(id);
     setUserDetails({ ...userDetails, [id]: e });
@@ -112,9 +122,12 @@ const User = ({ userList }: userProps) => {
   };
   // *modal actions
   const showModal = () => {
+    // console.log("btn", imgURL);
+    // setImgURL("");
     setOpen(true);
   };
   const handleCancel = () => {
+    setImgURL("");
     setError({} as any);
     setFieldName("");
     setUserDetails(initUser);
@@ -123,6 +136,10 @@ const User = ({ userList }: userProps) => {
   };
   // *FormActions
   const onEdit = (data: UserDTO) => {
+    // console.log(data.profile_Picture, "data.profile_Picture");
+    if (data.profile_Picture) {
+      setImgURL(data.profile_Picture);
+    }
     setUserDetails(data);
     setOpen(true);
     setEdit(true);
@@ -138,8 +155,10 @@ const User = ({ userList }: userProps) => {
   };
   const onSubmit = (e: any) => {
     e.preventDefault();
+    // setUserDetails({ ...userDetails, profile_Picture: imgURL });
     if (!Object.values(error).some((value) => value)) {
-      setUserDetails({ ...userDetails, profile_Picture: imgURL });
+      // console.log(imgURL, "11111");
+
       if (!isEdit) {
         CreateUser({
           payload: userDetails,
@@ -147,28 +166,16 @@ const User = ({ userList }: userProps) => {
         });
       }
       if (isEdit) {
+        // console.log(userDetails, "2222");
         UpdateUser({
-          payload: userDetails,
+          payload: { ...userDetails, profile_Picture: imgURL },
           setIsEdit: setEdit,
           setOpen: setOpen,
         });
       }
     }
   };
-
-  // console.log(Object.values(error), "Error Obj length");
-  // console.log(
-  //   !Object.values(userDetails).some((value) => value),
-  //   "user Init obj length",
-  // );
-  // console.log(
-  //   Object.values(error).some((value) => value) ||
-  //     !Object.values(userDetails).some((value) => value),
-  //   "Final Result",
-  // );
-
-  console.log(dayjs().subtract(15, "years").startOf("day"), "Date");
-
+  console.log(Object.values(userDetails), "Object.values(userDetails)");
   return (
     <div className="flex flex-col justify-center gap-4 p-4">
       <AntCard
@@ -196,7 +203,7 @@ const User = ({ userList }: userProps) => {
           loading: loading,
           disabled:
             Object.values(error).some((value) => value) ||
-            !Object.values(userDetails).some((value) => value),
+            !Object.values(userDetails).every((value) => value),
         }}
         okText={isEdit ? "Update" : "Save"}
         cancelButtonProps={{ danger: true, type: "primary" }}
@@ -231,7 +238,6 @@ const User = ({ userList }: userProps) => {
               value={userDetails.role}
               error={error.role}
             />
-
             <AntInput
               name={"designation"}
               value={userDetails.designation}
@@ -242,7 +248,7 @@ const User = ({ userList }: userProps) => {
               error={error.designation}
               onFocus={() => setFieldName("designation")}
             />
-            <AntInput
+            <EmailInput
               name={"email"}
               value={userDetails.email}
               label={"Email"}
@@ -251,6 +257,7 @@ const User = ({ userList }: userProps) => {
               disabled={loading ? true : false}
               error={error.email}
               onFocus={() => setFieldName("email")}
+              fieldName={fieldName}
             />
             <AntSelect
               id={"department"}
@@ -277,7 +284,8 @@ const User = ({ userList }: userProps) => {
               width="330px"
               transformStyle="translate(1%, 176%)"
               applyAgeValidation={true}
-              defaultValue={dayjs().subtract(15, "years").startOf("day")}
+              info={true}
+              defaultValue={dayjs().subtract(15, "years")}
               error={error.date_of_birth}
               onFocus={() => setFieldName("date_of_birth")}
             />

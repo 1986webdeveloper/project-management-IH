@@ -29,28 +29,24 @@ interface getUserListProps {
 }
 
 interface UserServiceProps {
-  setLoading: (e: boolean) => void;
-  dispatch: Dispatch<UnknownAction>;
-}
-
-interface checkUserEmailProps {
-  email: string;
+  setLoading?: (e: boolean) => void;
+  dispatch?: Dispatch<UnknownAction>;
 }
 const UserService = ({ dispatch, setLoading }: UserServiceProps) => {
   const CreateUser = async ({ payload, setOpen }: createUserProps) => {
-    setLoading(true);
+    setLoading && setLoading(true);
     await axios(RequestHelper("POST", API_LIST.CREATE_USER, { payload }))
       .then((response: any) => {
         const _data = response.data;
         GetUserList({});
         setOpen(false);
-        setLoading(false);
+        setLoading && setLoading(false);
         successToastHelper(_data?.response?.message);
       })
       .catch((error: any) => {
         const errorMessage = error?.response?.data?.response?.message;
         errorToastHelper(errorMessage, "createUserError");
-        setLoading(false);
+        setLoading && setLoading(false);
       });
   };
 
@@ -59,7 +55,7 @@ const UserService = ({ dispatch, setLoading }: UserServiceProps) => {
     setIsEdit,
     setOpen,
   }: updateUserProps) => {
-    setLoading(true);
+    setLoading && setLoading(true);
     await axios(
       RequestHelper("PUT", API_LIST.UPDATE_USER + `${payload._id}`, {
         payload: payload,
@@ -70,76 +66,54 @@ const UserService = ({ dispatch, setLoading }: UserServiceProps) => {
         GetUserList({});
         setOpen(false);
         setIsEdit(false);
-        setLoading(false);
+        setLoading && setLoading(false);
         successToastHelper(_data?.response?.message);
       })
       .catch((error: any) => {
         const errorMessage = error?.response?.data?.response?.message;
         errorToastHelper(errorMessage, "updateUserError");
-        setLoading(false);
+        setLoading && setLoading(false);
       });
   };
 
   const GetUserList = async ({ role }: getUserListProps) => {
     const url = role ? `${API_LIST.GET_USER}?role=${role}` : API_LIST.GET_USER;
 
-    setLoading(true);
+    setLoading && setLoading(true);
     await axios(RequestHelper("GET", url))
       .then((response: any) => {
         const _data: any = response.data.data;
         if (role === USER_ROLES.EMPLOYEE) {
-          dispatch(setEmployeeList(_data));
-          setLoading(false);
+          dispatch && dispatch(setEmployeeList(_data));
+          setLoading && setLoading(false);
         } else if (role === USER_ROLES.MANAGER) {
-          dispatch(setManagerList(_data));
-          setLoading(false);
+          dispatch && dispatch(setManagerList(_data));
+          setLoading && setLoading(false);
         } else {
-          dispatch(setUserList(_data));
-          setLoading(false);
+          dispatch && dispatch(setUserList(_data));
+          setLoading && setLoading(false);
         }
       })
       .catch((error: any) => {
         const errorMessage = error?.response?.data?.response?.message;
         errorToastHelper(errorMessage, "getUserError");
-        setLoading(false);
+        setLoading && setLoading(false);
       });
   };
 
   const DeleteUser = async ({ userId }: deleteUserProps) => {
-    setLoading(true);
+    setLoading && setLoading(true);
     await axios(RequestHelper("DELETE", API_LIST.DELETE_USER + `${userId}`))
       .then((response: any) => {
         const _data = response.data;
         GetUserList({});
-        setLoading(false);
+        setLoading && setLoading(false);
         successToastHelper(_data?.response?.message);
       })
       .catch((error: any) => {
         const errorMessage = error?.response?.data?.response?.message;
         errorToastHelper(errorMessage, "deleteUserError");
-        setLoading(false);
-      });
-  };
-
-  const checkUserEmail = async ({ email }: checkUserEmailProps) => {
-    let returnMessage = "";
-
-    setLoading && setLoading(true);
-    await axios(
-      RequestHelper("POST", API_LIST.CHECK_USER_EMAIL, { payload: { email } }),
-    )
-      .then((response: any) => {
-        const _data = response.data.response.message;
-
         setLoading && setLoading(false);
-        return (returnMessage = _data.toJson());
-      })
-      .catch((error: any) => {
-        const errorMessage = error?.response?.data?.response?.message;
-        // errorToastHelper(errorMessage, 'deleteUserError');
-        setLoading && setLoading(false);
-        returnMessage = errorMessage;
-        return (returnMessage = errorMessage);
       });
   };
 

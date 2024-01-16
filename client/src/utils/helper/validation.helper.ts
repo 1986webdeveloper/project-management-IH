@@ -1,3 +1,5 @@
+import UserService from "../service/user.service";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const validationHelper = (user: any, setError: (e: any) => void) => {
   const errors: any = {};
@@ -106,8 +108,9 @@ export const taskInputValidation = (
 };
 export const userInputValidation = (data: any, setError: (e: any) => void) => {
   const errors: any = {};
+
   const filter =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{3,}))$/;
   const minChar = /^.{4,20}$/gm;
   const alphabets = /^[a-zA-Z-][a-zA-Z -]*$/;
 

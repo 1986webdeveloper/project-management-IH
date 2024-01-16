@@ -1,5 +1,7 @@
+import { DEFAULT_PIC_URL } from "@/config/keys.config";
 import { UserDTO } from "@/types/auth.types";
 import { ClientDTO, ProjectDTO, TaskDTO } from "@/types/fieldTypes";
+import dayjs from "dayjs";
 
 export const StatusList = [
   { label: "In-Progress", value: "IN_PROGRESS" },
@@ -71,7 +73,7 @@ export const initUser: UserDTO = {
   email: "",
   designation: "",
   role: "",
-  profile_Picture: "",
-  date_of_birth: "",
+  date_of_birth: dayjs().subtract(15, "years").format("YYYY/MM/DD"),
   department: "",
+  // profile_Picture: DEFAULT_PIC_URL,
 };

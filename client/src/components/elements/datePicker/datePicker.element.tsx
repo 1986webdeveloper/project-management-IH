@@ -1,7 +1,8 @@
-import { DatePicker } from "antd";
+import { DatePicker, Popover } from "antd";
 import styles from "./datePicker.module.scss";
 import dayjs, { Dayjs } from "dayjs";
 import { RangePickerProps } from "antd/es/date-picker";
+import { FcInfo } from "react-icons/fc";
 
 type InputProps = {
   name: string;
@@ -21,6 +22,7 @@ type InputProps = {
   applyAgeValidation?: boolean;
   onFocus?: () => void;
   defaultValue?: Dayjs;
+  info?: boolean;
 };
 
 const AntDatePicker = ({
@@ -35,6 +37,7 @@ const AntDatePicker = ({
   applyAgeValidation,
   onFocus,
   defaultValue,
+  info,
 }: InputProps) => {
   const dynamicDisabledDate: (
     minDate?: dayjs.ConfigType,
@@ -97,6 +100,26 @@ const AntDatePicker = ({
         status={error ? "error" : ""}
         onFocus={onFocus}
       />
+      {info ? (
+        <div className={styles.infoDiv}>
+          <Popover
+            placement="bottom"
+            title={"Mandatory Age"}
+            content={
+              <div className={styles.popContent}>
+                Any employee must be 15 years or above
+                {/* <br /> one lowercase, one number and one special <br />
+                character */}
+              </div>
+            }
+            trigger="hover"
+          >
+            <FcInfo />
+          </Popover>
+        </div>
+      ) : (
+        ""
+      )}
       {error ? (
         <span
           className={styles.error}
