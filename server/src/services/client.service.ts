@@ -10,6 +10,8 @@ export const ClientService = new (class {
 			onBoardingDate: clientData.onBoardingDate,
 			industry: clientData.industry,
 			managerList: clientData.managerList,
+			email: clientData.email,
+			client_picture: clientData.client_picture,
 		});
 
 		if (Client) {
@@ -35,6 +37,11 @@ export const ClientService = new (class {
 	deleteClient = async (ClientId: string) => {
 		let deletedClient = await ClientSchema.findByIdAndDelete(ClientId).exec();
 		return deletedClient;
+	};
+
+	getClientByEmail = async (email: string) => {
+		const Client = await ClientSchema.findOne({ email }).exec();
+		return Client;
 	};
 
 	getClientById = async (ClientId: string) => {

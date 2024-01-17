@@ -7,13 +7,13 @@ export const AuthService = new (class {
 		const user = await User.create({
 			email: userData.email,
 			password: userData.password,
-			name: userData.name,
+			name: userData.name.trim(),
 			designation: userData.designation,
 			role: userData.role,
 			department: userData.department,
 			date_of_birth: userData.date_of_birth,
 			profile_Picture: userData.profile_Picture,
-			UserStatus: userData.UserStatus,
+			userStatus: userData.userStatus,
 			_id: userData._id,
 		});
 

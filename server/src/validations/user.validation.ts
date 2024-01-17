@@ -1,5 +1,5 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { UserRoleEnum } from '../Interfaces/general.enum';
+import { UserRoleEnum, UserStatusEnum } from '../Interfaces/general.enum';
 
 export class UserValidation {
 	@IsNotEmpty()
@@ -27,4 +27,10 @@ export class UserValidation {
 	@IsEnum(UserRoleEnum)
 	@IsNotEmpty()
 	role!: string;
+
+	@IsNotEmpty()
+	@IsString()
+	@IsEnum(UserStatusEnum)
+	@IsNotEmpty()
+	userStatus!: string;
 }

@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsEmail, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { Types } from 'mongoose';
 
 export class CreateClientValidation {
@@ -17,4 +17,8 @@ export class CreateClientValidation {
 	@IsArray()
 	@ValidateNested({ each: true })
 	managerList: [];
+
+	@IsNotEmpty()
+	@IsEmail()
+	email!: string;
 }

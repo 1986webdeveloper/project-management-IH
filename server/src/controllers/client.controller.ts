@@ -8,7 +8,7 @@ import { ClientService } from '../services/client.service';
 export default class ClientController {
 	protected readonly CreateClient = async (req: Request, res: Response) => {
 		try {
-			const payload: CreateClientValidation = req.body;
+			const payload = req.body;
 			console.log(payload);
 			const validObj = new CreateClientValidation();
 			Object.assign(validObj, payload);

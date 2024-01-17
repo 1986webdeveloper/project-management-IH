@@ -5,5 +5,8 @@ export interface ClientInterface {
 	onBoardingDate: string;
 	industry: string;
 	managerList: string[];
+	email: string;
+	client_picture: string;
+
 	_id?: Types.ObjectId;
 }

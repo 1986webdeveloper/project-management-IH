@@ -17,7 +17,7 @@ export enum UserRoleEnum {
 	EMPLOYEE = 'EMPLOYEE',
 }
 
-export enum UserStatus {
+export enum UserStatusEnum {
 	ACTIVE = 'ACTIVE',
 	INACTIVE = 'INACTIVE',
 	BLOCKED = 'BLOCKED',

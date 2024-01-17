@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import { UserInterface } from '../Interfaces/user.interface';
-import { UserRoleEnum, UserStatus } from '../Interfaces/general.enum';
+import { UserRoleEnum, UserStatusEnum } from '../Interfaces/general.enum';
 
 const User: Schema = new Schema(
 	{
@@ -11,7 +11,7 @@ const User: Schema = new Schema(
 		role: { type: String, enum: UserRoleEnum },
 		profile_Picture: { type: String },
 		date_of_birth: { type: String },
-		UserStatus: { type: String, enum: UserStatus },
+		userStatus: { type: String, enum: UserStatusEnum },
 		department: { type: String },
 	},
 	{ timestamps: true, versionKey: false },

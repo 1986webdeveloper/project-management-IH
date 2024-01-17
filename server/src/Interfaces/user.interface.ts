@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { UserRoleEnum, UserStatus } from './general.enum';
+import { UserRoleEnum, UserStatusEnum } from './general.enum';
 
 export interface UserInterface extends Document {
 	name: string;
@@ -10,6 +10,6 @@ export interface UserInterface extends Document {
 	profile_Picture: any;
 	date_of_birth: string;
 	department: string;
-	UserStatus: UserStatus;
+	userStatus: UserStatusEnum;
 	_id?: Types.ObjectId;
 }

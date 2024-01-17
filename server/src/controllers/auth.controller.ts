@@ -9,6 +9,7 @@ import { checkValidation } from '../helpers/validation.helper';
 import { decryptionHelper } from '../helpers/decryption.helper';
 import { decryptAndVerifyToken, generateToken } from '../helpers/token.helper';
 import { sendMailer } from '../helpers/mailer.helper';
+import { ClientService } from '../services/client.service';
 
 export default class AuthController {
 	protected readonly Signup = async (req: Request, res: Response) => {
@@ -190,10 +191,16 @@ export default class AuthController {
 					.json(errorResponseHelper({ message: 'No Email found', status: 'Error', statusCode: 400 }));
 			}
 			const userExists = await UserService.getUserByEmail(userEmail);
+			const clientExists = await ClientService.getClientByEmail(userEmail);
+
 			if (userExists) {
 				return res
 					.status(403)
-					.json(errorResponseHelper({ message: 'User email already in use.', status: 'Error', statusCode: 403 }));
+					.json(errorResponseHelper({ message: 'This email is already in use.', status: 'Error', statusCode: 403 }));
+			} else if (clientExists) {
+				return res
+					.status(403)
+					.json(errorResponseHelper({ message: 'This email is already in use.', status: 'Error', statusCode: 403 }));
 			} else {
 				return res.status(200).json(
 					successResponseHelper({
