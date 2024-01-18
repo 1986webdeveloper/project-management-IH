@@ -83,7 +83,7 @@ const ProjectService = ({ dispatch, setLoading }: ProjectServiceProps) => {
       .catch((error: any) => {
         const errorMessage = error?.response?.data?.response?.message;
         console.log(errorMessage);
-        errorToastHelper(errorMessage);
+        // errorToastHelper(errorMessage);
         setLoading(false);
       });
   };

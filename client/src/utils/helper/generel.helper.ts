@@ -1,16 +1,16 @@
-import { DepartmentsList, DesignationList } from '@/constants/user.constant';
+import { DepartmentsList, DesignationList } from "@/constants/user.constant";
 
 export const departmentHelper = (matchKey: string) => {
-	const filteredDepartments = DepartmentsList.filter((route: any) => {
-		return route?.permission?.includes(matchKey);
-	});
-	return filteredDepartments;
+  const filteredDepartments = DepartmentsList.filter((opt: any) => {
+    return opt?.permission?.includes(matchKey);
+  });
+  return filteredDepartments;
 };
 
 export const designationHelper = (matchKey: string) => {
-	const filteredDesignation = DesignationList.filter((route: any) => {
-		return route?.permission?.includes(matchKey);
-	});
+  const filteredDesignation = DesignationList.filter((opt: any) => {
+    return opt?.permission?.includes(matchKey);
+  });
 
-	return filteredDesignation;
+  return filteredDesignation;
 };

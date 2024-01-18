@@ -96,7 +96,7 @@ const UserService = ({ dispatch, setLoading }: UserServiceProps) => {
       })
       .catch((error: any) => {
         const errorMessage = error?.response?.data?.response?.message;
-        errorToastHelper(errorMessage, "getUserError");
+        // errorToastHelper(errorMessage, "getUserError");
         setLoading && setLoading(false);
       });
   };
