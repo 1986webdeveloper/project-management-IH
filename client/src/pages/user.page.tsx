@@ -76,13 +76,13 @@ const User = ({ userList }: userProps) => {
     setOpen(true);
     setEdit(true);
   };
-  const onView = (data: UserDTO) => {
-    if (data.profile_Picture) {
-      setImgURL(data.profile_Picture);
-    }
-    setUserDetails(data);
-    setView(true);
-  };
+  // const onView = (data: UserDTO) => {
+  //   if (data.profile_Picture) {
+  //     setImgURL(data.profile_Picture);
+  //   }
+  //   setUserDetails(data);
+  //   setView(true);
+  // };
   const onDelete = (data: UserDTO) => {
     // for now considering the key that you ca
     if (data.role === USER_ROLES.MANAGER && data.clients?.length)
@@ -119,8 +119,6 @@ const User = ({ userList }: userProps) => {
       errorToastHelper("Please fill the details properly.");
     }
   };
-  console.log(userDetails, "userDetails");
-
   return (
     <div className="flex flex-col justify-center gap-4 p-4">
       <AntCard
@@ -134,7 +132,7 @@ const User = ({ userList }: userProps) => {
         <UserTable
           userList={userList}
           onEdit={onEdit}
-          onView={onView}
+          // onView={onView}
           onDelete={onDelete}
           loading={loading}
         />
