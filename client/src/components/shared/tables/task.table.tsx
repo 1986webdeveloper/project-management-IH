@@ -89,7 +89,12 @@ const TaskTable = ({ taskList, onDelete, onEdit, loading }: Props) => {
       },
     },
   ];
-  return <AntTable columns={columns} data={taskList} />;
+  return (
+    <AntTable
+      columns={columns}
+      data={taskList.map((task, index) => ({ ...task, key: index }))}
+    />
+  );
 };
 
 export default TaskTable;

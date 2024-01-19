@@ -9,10 +9,11 @@ import { USER_ERROR } from "@/utils/error/messages";
 import CreateButton from "@/components/elements/buttons/createButton.element";
 import { userInputValidation } from "@/utils/helper/validation.helper";
 import { initUser } from "@/constants/general.constants";
-import { DEFAULT_PIC_URL } from "@/config/keys.config";
+import { DEFAULT_USER_URL } from "@/config/keys.config";
 import UserForm from "@/components/shared/forms/user.form";
 import UserTable from "@/components/shared/tables/user.table";
 import FormModal from "@/components/shared/modals/form.modal";
+import ViewModal from "@/components/shared/modals/view.modal";
 
 interface userProps {
   userList: UserDTO[];
@@ -20,6 +21,7 @@ interface userProps {
 
 const User = ({ userList }: userProps) => {
   const [open, setOpen] = useState(false);
+  const [view, setView] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isEdit, setEdit] = useState(false);
   const [imgURL, setImgURL] = useState("");
@@ -47,7 +49,7 @@ const User = ({ userList }: userProps) => {
   useEffect(() => {
     setUserDetails({
       ...userDetails,
-      profile_Picture: imgURL ? imgURL : DEFAULT_PIC_URL,
+      profile_Picture: imgURL ? imgURL : DEFAULT_USER_URL,
     });
   }, []);
 
@@ -61,6 +63,7 @@ const User = ({ userList }: userProps) => {
     setFieldName("");
     setUserDetails(initUser);
     setOpen(false);
+    setView(false);
     setEdit(false);
   };
 
@@ -72,6 +75,13 @@ const User = ({ userList }: userProps) => {
     setUserDetails(data);
     setOpen(true);
     setEdit(true);
+  };
+  const onView = (data: UserDTO) => {
+    if (data.profile_Picture) {
+      setImgURL(data.profile_Picture);
+    }
+    setUserDetails(data);
+    setView(true);
   };
   const onDelete = (data: UserDTO) => {
     // for now considering the key that you ca
@@ -89,7 +99,10 @@ const User = ({ userList }: userProps) => {
     if (!Object.values(errors).some((value) => value)) {
       if (!isEdit) {
         CreateUser({
-          payload: userDetails,
+          payload: {
+            ...userDetails,
+            profile_Picture: imgURL,
+          },
           setOpen: setOpen,
         });
         setError({} as any);
@@ -106,6 +119,8 @@ const User = ({ userList }: userProps) => {
       errorToastHelper("Please fill the details properly.");
     }
   };
+  console.log(userDetails, "userDetails");
+
   return (
     <div className="flex flex-col justify-center gap-4 p-4">
       <AntCard
@@ -119,6 +134,7 @@ const User = ({ userList }: userProps) => {
         <UserTable
           userList={userList}
           onEdit={onEdit}
+          onView={onView}
           onDelete={onDelete}
           loading={loading}
         />
@@ -146,6 +162,27 @@ const User = ({ userList }: userProps) => {
           fieldName={fieldName}
         />
       </FormModal>
+      {/* <ViewModal
+        open={view}
+        onSubmit={onSubmit}
+        handleCancel={handleCancel}
+        loading={loading}
+        error={error}
+        checkObject={userDetails}
+        title={"User Details"}
+        // SubmitButtonText={isEdit ? "Update" : "Save"}
+      >
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
+            {Object.entries(userDetails).map(([key, value]) => (
+              <div key={key}>
+                <label>{`${key}:`}</label>
+                <p>{value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </ViewModal> */}
     </div>
   );
 };

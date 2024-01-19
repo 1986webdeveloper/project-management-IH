@@ -94,7 +94,12 @@ const ProjectTable = ({ projectList, onDelete, onEdit, loading }: Props) => {
       },
     },
   ];
-  return <AntTable columns={columns} data={projectList} />;
+  return (
+    <AntTable
+      columns={columns}
+      data={projectList.map((project, index) => ({ ...project, key: index }))}
+    />
+  );
 };
 
 export default ProjectTable;

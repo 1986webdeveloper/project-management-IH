@@ -49,7 +49,12 @@ const ClientTable = ({ clientList, onDelete, onEdit, loading }: Props) => {
     },
   ];
 
-  return <AntTable columns={columns} data={clientList} />;
+  return (
+    <AntTable
+      columns={columns}
+      data={clientList.map((client, index) => ({ ...client, key: index }))}
+    />
+  );
 };
 
 export default ClientTable;

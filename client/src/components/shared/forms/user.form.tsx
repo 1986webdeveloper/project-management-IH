@@ -99,20 +99,6 @@ const UserForm = ({
           error={error.email}
           onFocus={() => setFieldName("email")}
         />
-        {/* <EmailInput
-          name={"email"}
-          value={userDetails.email}
-          label={"Email"}
-          placeHolder={"Enter Your Email"}
-          onChange={handleChange}
-          disabled={loading ? true : false}
-          error={error.email}
-          onFocus={() => setFieldName("email")}
-          fieldName={fieldName}
-          setError={setError}
-          errorObj={error}
-          checkingURL={API_LIST.CHECK_EMAIL}
-        /> */}
         <AntSelect
           id={"UserStatus"}
           options={userStatusList}
