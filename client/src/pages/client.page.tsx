@@ -50,6 +50,7 @@ const Client = ({ clientList, managerList }: clientProps) => {
 
   // *FormActions
   const onEdit = (data: ClientDTO) => {
+    console.log(data);
     if (data.client_picture) {
       setImgURL(data.client_picture);
     }

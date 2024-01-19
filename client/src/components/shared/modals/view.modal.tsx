@@ -1,8 +1,8 @@
-import { Button, Modal } from "antd";
-import { ReactNode } from "react";
+import { UserViewField } from "@/constants/viewTable.constants";
+import { UserDTO } from "@/types/auth.types";
+import { Modal } from "antd";
 
 type ViewModalProps = {
-  children: ReactNode;
   open: boolean;
   onSubmit: (e: any) => void;
   handleCancel: () => void;
@@ -10,18 +10,38 @@ type ViewModalProps = {
   error: any;
   checkObject: any;
   title: string;
-  //   SubmitButtonText: string;
+  selectedRow: UserDTO;
 };
 
 const ViewModal = ({
-  children,
+  selectedRow,
   handleCancel,
-  loading,
-  onSubmit,
   open,
   title,
-}: //   SubmitButtonText,
-ViewModalProps) => {
+}: ViewModalProps) => {
+  // const allowed = ["name", "email", "role"];
+  // const filteredField: UserDTO = Object.keys(selectedRow)
+  //   .filter((key) => allowed.includes(key))
+  //   .reduce((obj: any, key: any) => {
+  //     obj[key] = selectedRow[key];
+  //     return obj;
+  //   }, {});
+  const filterUserObject = (
+    selectedRow: { [x: string]: any; hasOwnProperty: (arg0: any) => any },
+    fields: any[],
+  ) => {
+    const filteredObject = {} as any;
+    fields.forEach((field: { key: any; label: any }) => {
+      const { key, label } = field;
+      if (selectedRow.hasOwnProperty(key)) {
+        filteredObject[label] = selectedRow[key];
+      }
+    });
+
+    return filteredObject;
+  };
+  const filteredObject: UserDTO = filterUserObject(selectedRow, UserViewField);
+
   return (
     <Modal
       open={open}
@@ -30,9 +50,18 @@ ViewModalProps) => {
       width={800}
       onCancel={handleCancel}
       cancelButtonProps={{ danger: true, type: "primary" }}
-      footer={<button>Close</button>}
+      footer
     >
-      {children}
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
+          {Object.entries(filteredObject).map(([key, value]) => (
+            <div className="flex" key={key}>
+              <label>{`${key}:`}</label>
+              <p>{value}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </Modal>
   );
 };

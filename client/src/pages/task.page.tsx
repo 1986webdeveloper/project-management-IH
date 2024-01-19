@@ -90,6 +90,7 @@ const Task = ({
     }
   };
   const onEdit = (data: TaskDTO) => {
+    // console.log(data);
     setTaskDetails(data);
     setOpen(true);
     setEdit(true);

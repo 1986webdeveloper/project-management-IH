@@ -1,21 +1,31 @@
 import DeleteButton from "@/components/elements/buttons/deleteButton.element";
 import EditButton from "@/components/elements/buttons/editButton.element";
-import ViewButton from "@/components/elements/buttons/viewButton.element";
 import AntTable from "@/components/elements/table/table.element";
 import { USER_STATUS_ENUM, UserRole } from "@/constants/user.constant";
 import { UserDTO } from "@/types/auth.types";
 import { Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { DesignationList } from "../../../constants/user.constant";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 type Props = {
   userList: UserDTO[];
   onEdit: (e: UserDTO) => void;
   onDelete: (e: UserDTO) => void;
   loading: boolean;
+  setView?: (e: boolean) => void;
+  handalRowClick?: (data: any) => void;
 };
 
-const UserTable = ({ userList, onDelete, onEdit, loading }: Props) => {
+const UserTable = ({
+  userList,
+  onDelete,
+  onEdit,
+  loading,
+  handalRowClick,
+}: Props) => {
+  const loggedUser = useSelector((state: RootState) => state.auth.loggedUser);
   const columns: ColumnsType<UserDTO> = [
     {
       title: <span className="text-blue-950">Name</span>,
@@ -77,11 +87,17 @@ const UserTable = ({ userList, onDelete, onEdit, loading }: Props) => {
       },
     },
   ];
+  const filteredUser = () => {
+    return userList.filter((record) => {
+      return record.email !== loggedUser.email;
+    });
+  };
 
   return (
     <AntTable
       columns={columns}
-      data={userList.map((user, index) => ({ ...user, key: index }))}
+      data={filteredUser()}
+      handalRowClick={handalRowClick}
     />
   );
 };

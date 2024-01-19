@@ -124,7 +124,10 @@ const App: React.FC = () => {
     {
       roles: [USER_ROLES.EMPLOYEE],
       routes: [
-        { element: <Dashboard loggedUser={auth.loggedUser} /> },
+        {
+          path: ROUTES.DASHBOARD,
+          element: <Dashboard loggedUser={auth.loggedUser} />,
+        },
         {
           path: ROUTES.TASK,
           element: (

@@ -21,6 +21,8 @@ const useList = () => {
   const ModuleList = (list: any[], label: string) => {
     const allProjects = [...list];
     const labelValuePair: any[] = [];
+    console.log(list, "lliisstt.,,..,,");
+
     for (const key of allProjects) {
       const _obj = { label: key[label], value: key._id };
       labelValuePair.push(_obj);

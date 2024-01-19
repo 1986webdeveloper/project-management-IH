@@ -27,6 +27,7 @@ const User = ({ userList }: userProps) => {
   const [imgURL, setImgURL] = useState("");
   const [userDetails, setUserDetails] = useState(initUser);
   const [fieldName, setFieldName] = useState("");
+  const [selectedRow, setSelectedRow] = useState({} as UserDTO);
   const [error, setError] = useState({
     name: "",
     email: "",
@@ -41,11 +42,6 @@ const User = ({ userList }: userProps) => {
     dispatch,
     setLoading,
   });
-
-  // useEffect(() => {
-  //   const { errors } = userInputValidation(userDetails, setError);
-  //   setError({ ...error, [fieldName]: errors[fieldName] });
-  // }, [userDetails, fieldName]);
   useEffect(() => {
     setUserDetails({
       ...userDetails,
@@ -76,13 +72,10 @@ const User = ({ userList }: userProps) => {
     setOpen(true);
     setEdit(true);
   };
-  // const onView = (data: UserDTO) => {
-  //   if (data.profile_Picture) {
-  //     setImgURL(data.profile_Picture);
-  //   }
-  //   setUserDetails(data);
-  //   setView(true);
-  // };
+  const handalRowClick = (data: any) => {
+    setSelectedRow(data);
+    setView(true);
+  };
   const onDelete = (data: UserDTO) => {
     // for now considering the key that you ca
     if (data.role === USER_ROLES.MANAGER && data.clients?.length)
@@ -132,7 +125,7 @@ const User = ({ userList }: userProps) => {
         <UserTable
           userList={userList}
           onEdit={onEdit}
-          // onView={onView}
+          handalRowClick={handalRowClick}
           onDelete={onDelete}
           loading={loading}
         />
@@ -160,7 +153,7 @@ const User = ({ userList }: userProps) => {
           fieldName={fieldName}
         />
       </FormModal>
-      {/* <ViewModal
+      <ViewModal
         open={view}
         onSubmit={onSubmit}
         handleCancel={handleCancel}
@@ -168,19 +161,8 @@ const User = ({ userList }: userProps) => {
         error={error}
         checkObject={userDetails}
         title={"User Details"}
-        // SubmitButtonText={isEdit ? "Update" : "Save"}
-      >
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-col gap-3">
-            {Object.entries(userDetails).map(([key, value]) => (
-              <div key={key}>
-                <label>{`${key}:`}</label>
-                <p>{value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </ViewModal> */}
+        selectedRow={selectedRow}
+      />
     </div>
   );
 };

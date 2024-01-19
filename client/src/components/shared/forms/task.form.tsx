@@ -72,6 +72,7 @@ const TaskForm = ({
     setTaskDetails({ ...taskDetails, [id]: dateString });
     setError({ ...error, [id]: "" });
   };
+  console.log(taskDetails, "12121212----->");
 
   return (
     <div>

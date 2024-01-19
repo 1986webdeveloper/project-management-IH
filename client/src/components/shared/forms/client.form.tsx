@@ -65,6 +65,7 @@ const ClientForm = ({
     setError({ ...error, [id]: "" });
     setClientDetails({ ...clientDetails, [id]: dateString });
   };
+  console.log(clientDetails, "clientDetails");
 
   return (
     <div>
