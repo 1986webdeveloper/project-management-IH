@@ -10,6 +10,7 @@ import { decryptionHelper } from '../helpers/decryption.helper';
 import { decryptAndVerifyToken, generateToken } from '../helpers/token.helper';
 import { sendMailer } from '../helpers/mailer.helper';
 import { ClientService } from '../services/client.service';
+import { UserValidation } from '../validations/user.validation';
 
 export default class AuthController {
 	protected readonly Signup = async (req: Request, res: Response) => {
@@ -211,6 +212,63 @@ export default class AuthController {
 				);
 			}
 		} catch (error) {
+			return res
+				.status(500)
+				.json(errorResponseHelper({ message: 'Something went wrong.', status: 'Error', statusCode: 500, error }));
+		}
+	};
+
+	protected readonly CreateUser = async (req: Request, res: Response) => {
+		try {
+			const payload = req.body;
+
+			// *Validation of body
+			const validObj = new UserValidation();
+
+			Object.assign(validObj, payload);
+
+			const _errMessage = await checkValidation(validObj);
+
+			if (_errMessage) {
+				return res.status(422).json(errorResponseHelper({ message: _errMessage, status: 'Error', statusCode: 422 }));
+			}
+
+			// *Checking for duplicate user
+			const userExists = await UserService.getUserByEmail(payload.email);
+			if (userExists) {
+				return res
+					.status(403)
+					.json(errorResponseHelper({ message: 'User already registered', status: 'Error', statusCode: 403 }));
+			}
+
+			// *Password hashing
+			const hashedPassword = encryptionHelper(process.env.RESET_PASSWORD);
+
+			const user: UserInterface | null = await AuthService.registerUser({
+				...payload,
+				password: hashedPassword,
+			} as UserInterface);
+
+			// *storing into database
+			if (user) {
+				if (!user.profile_Picture) {
+					user.profile_Picture = user.profile_Picture ? user.profile_Picture : 'uploads/007_default _avatar.png';
+				}
+				const resData = { email: user.email, name: user.name };
+				return res.status(201).json(
+					successResponseHelper({
+						message: 'User data saved Successfully',
+						status: 'Success',
+						statusCode: 201,
+						data: resData,
+					}),
+				);
+			} else {
+				return res
+					.status(400)
+					.json(errorResponseHelper({ message: 'User data is not valid', status: 'Error', statusCode: 400 }));
+			}
+		} catch (error: any) {
 			return res
 				.status(500)
 				.json(errorResponseHelper({ message: 'Something went wrong.', status: 'Error', statusCode: 500, error }));
