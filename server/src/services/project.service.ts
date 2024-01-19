@@ -58,4 +58,40 @@ export const ProjectService = new (class {
 		const project = await ProjectSchema.findById(projectId).exec();
 		return project;
 	};
+
+	getProjectByReportingManager = async (reportingManager: string) => {
+		const project = await ProjectSchema.find({ reportingManager })
+			.populate([
+				{
+					path: 'assignedEmployeeList',
+					select: '-password',
+				},
+				{
+					path: 'clientId',
+				},
+				{
+					path: 'reportingManager',
+				},
+			])
+			.exec();
+		return project;
+	};
+
+	getProjectsByAssignedEmployee = async (assignedEmployee: string) => {
+		const Task = await ProjectSchema.find({ reportedBy: { $in: [assignedEmployee] } })
+			.populate([
+				{
+					path: 'assignedEmployeeList',
+					select: '-password',
+				},
+				{
+					path: 'clientId',
+				},
+				{
+					path: 'reportingManager',
+				},
+			])
+			.exec();
+		return Task;
+	};
 })();

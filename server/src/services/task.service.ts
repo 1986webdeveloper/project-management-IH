@@ -54,4 +54,42 @@ export const TaskService = new (class {
 		const Task = await TaskSchema.findById(TaskId).exec();
 		return Task;
 	};
+
+	getTaskReportedBy = async (reportedBy: string) => {
+		const Task = await TaskSchema.find({ reportedBy: { $in: [reportedBy] } })
+			.populate([
+				{
+					path: 'reportedBy',
+					select: '-password',
+				},
+				{
+					path: 'reportingManager',
+					select: '-password',
+				},
+				{
+					path: 'projectId',
+				},
+			])
+			.exec();
+		return Task;
+	};
+
+	getTasksByReportingManager = async (reportingManager: string) => {
+		const Task = await TaskSchema.find({ reportingManager })
+			.populate([
+				{
+					path: 'reportedBy',
+					select: '-password',
+				},
+				{
+					path: 'reportingManager',
+					select: '-password',
+				},
+				{
+					path: 'projectId',
+				},
+			])
+			.exec();
+		return Task;
+	};
 })();

@@ -11,7 +11,7 @@ export default class Project extends ProjectController {
 
 	private initializeRoutes() {
 		this.router.post('/create', this.CreateProject);
-		this.router.get('/get', this.ProjectList);
+		this.router.get('/get', this.GetProjectList);
 		this.router.put('/update/:_id', this.UpdateProject);
 		this.router.delete('/delete/:_id', this.DeleteProject);
 	}

@@ -4,6 +4,9 @@ import { ProjectService } from '../services/project.service';
 import { errorResponseHelper, successResponseHelper } from '../helpers/response.helper';
 import { CreateProjectValidation } from '../validations/project.validation';
 import { checkValidation } from '../helpers/validation.helper';
+import { decryptAndVerifyToken } from '../helpers/token.helper';
+import { UserService } from '../services/user.service';
+import { UserRoleEnum } from '../Interfaces/general.enum';
 
 export default class ProjectController {
 	protected readonly CreateProject = async (req: Request, res: Response) => {
@@ -38,22 +41,54 @@ export default class ProjectController {
 		}
 	};
 
-	protected readonly ProjectList = async (req: Request, res: Response) => {
+	protected readonly GetProjectList = async (req: Request, res: Response) => {
 		try {
-			const projects: ProjectInterface[] = await ProjectService.getProjects();
-			if (projects.length > 0) {
-				return res.status(200).json(
-					successResponseHelper({
-						message: 'Project list fetched Successfully',
-						status: 'Success',
-						statusCode: 200,
-						data: projects,
-					}),
-				);
+			const projectId = req.params.id;
+			const token = req.headers.authorization;
+			const decrypted: any = decryptAndVerifyToken(token.split(' ')[1]);
+			const user = await UserService.getUserByEmail(decrypted.email);
+
+			if (!projectId) {
+				let responseList: ProjectInterface[] = [];
+
+				if (user.role === UserRoleEnum.MANAGER) {
+					responseList = await ProjectService.getProjectByReportingManager(user._id.toString());
+				} else if (user.role === UserRoleEnum.EMPLOYEE) {
+				} else {
+					responseList = await ProjectService.getProjects();
+					console.log(responseList, 'admin');
+				}
+				if (responseList.length > 0) {
+					return res.status(200).json(
+						successResponseHelper({
+							message: 'Project list fetched Successfully',
+							status: 'Success',
+							statusCode: 200,
+							data: responseList,
+						}),
+					);
+				} else {
+					return res
+						.status(404)
+						.json(errorResponseHelper({ message: 'No project found', status: 'Error', statusCode: 404 }));
+				}
 			} else {
-				return res
-					.status(404)
-					.json(errorResponseHelper({ message: 'No project found', status: 'Error', statusCode: 404 }));
+				let responseObj: ProjectInterface;
+				const projectsList: ProjectInterface = await ProjectService.getProjectById(projectId);
+				if (Object.keys(projectsList).length > 0) {
+					return res.status(200).json(
+						successResponseHelper({
+							message: 'Project list fetched Successfully',
+							status: 'Success',
+							statusCode: 200,
+							data: responseObj,
+						}),
+					);
+				} else {
+					return res
+						.status(404)
+						.json(errorResponseHelper({ message: 'No project found', status: 'Error', statusCode: 404 }));
+				}
 			}
 		} catch (error) {
 			return res

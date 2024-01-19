@@ -4,6 +4,9 @@ import { errorResponseHelper, successResponseHelper } from '../helpers/response.
 import { checkValidation } from '../helpers/validation.helper';
 import { TaskService } from '../services/task.service';
 import { TaskInterface } from '../Interfaces/task.interface';
+import { decryptAndVerifyToken } from '../helpers/token.helper';
+import { UserService } from '../services/user.service';
+import { UserRoleEnum } from '../Interfaces/general.enum';
 
 export default class TaskController {
 	protected readonly CreateTask = async (req: Request, res: Response) => {
@@ -41,14 +44,25 @@ export default class TaskController {
 	protected readonly GetTasks = async (req: Request, res: Response) => {
 		try {
 			const taskId = req.params.id;
+			const token = req.headers.authorization;
+			const decrypted: any = decryptAndVerifyToken(token.split(' ')[1]);
+			const user = await UserService.getUserByEmail(decrypted.email);
 			if (!taskId) {
-				const tasks: TaskInterface[] = await TaskService.getTasks();
+				let responseList: TaskInterface[] = [];
+
+				if (user.role === UserRoleEnum.MANAGER) {
+					responseList = await TaskService.getTasksByReportingManager(user._id.toString());
+				} else if (user.role === UserRoleEnum.EMPLOYEE) {
+					responseList = await TaskService.getTaskReportedBy(user._id.toString());
+				} else {
+					responseList = await TaskService.getTasks();
+				}
 				return res.status(200).json(
 					successResponseHelper({
 						message: 'Task list fetched Successfully',
 						status: 'Success',
 						statusCode: 200,
-						data: tasks,
+						data: responseList,
 					}),
 				);
 			} else {

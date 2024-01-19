@@ -111,16 +111,16 @@ export default class UserController {
 				} else {
 					usersList = await UserService.getUserList();
 				}
-				const decrypted: any = decryptAndVerifyToken(token.split(' ')[1]);
-				const user = await UserService.getUserByEmail(decrypted.email);
-				const filteredList = usersList.filter(x => x.email !== user.email);
+				// const decrypted: any = decryptAndVerifyToken(token.split(' ')[1]);
+				// const user = await UserService.getUserByEmail(decrypted.email);
+				// const filteredList = usersList.filter(x => x.email !== user.email);
 
 				return res.status(200).json(
 					successResponseHelper({
 						message: 'User list fetched Successfully',
 						status: 'Success',
 						statusCode: 200,
-						data: filteredList,
+						data: usersList,
 					}),
 				);
 			} else {
